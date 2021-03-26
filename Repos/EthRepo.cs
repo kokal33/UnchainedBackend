@@ -18,6 +18,9 @@ namespace UnchainedBackend.Repos
         Task<TransactionReceipt> MintWithTokenURI(MintModel model);
         Task<int> GetContractSupply();
         Task<string> GetTokenURI(GetTokenURIModel model);
+        Task<string> TransferTo(TransferToModel model);
+        Task<string> OwnerOf(OwnerOfModel model);
+
     }
 
     public class EthRepo : IEthRepo
@@ -87,9 +90,9 @@ namespace UnchainedBackend.Repos
             var contractAddress = _configuration["Ethereum:ContractAddress"];
             var web3 = _ethHelper.GetWeb3(privateAddress);
 
-            var tokenURIFunction = new TotalSupplyFunction();
+            var totalSupplyFunction = new TotalSupplyFunction();
             var mintHandler = web3.Eth.GetContractQueryHandler<TotalSupplyFunction>();
-            var totalSupply = await mintHandler.QueryAsync<int>(contractAddress, tokenURIFunction);
+            var totalSupply = await mintHandler.QueryAsync<int>(contractAddress, totalSupplyFunction);
 
             return totalSupply;
         }
@@ -107,6 +110,39 @@ namespace UnchainedBackend.Repos
             var mintHandler = web3.Eth.GetContractQueryHandler<TokenURIFunction>();
             var totalSupply = await mintHandler.QueryAsync<string>(contractAddress, tokenURIFunction);
             return totalSupply;
+        }
+
+        public async Task<string> TransferTo(TransferToModel model)
+        {
+            var privateAddress = _configuration["Ethereum:PrivateAddress"];
+            var contractAddress = _configuration["Ethereum:ContractAddress"];
+
+            var web3 = _ethHelper.GetWeb3(null);
+            var transferFunction = new TransferFromFunction()
+            {
+                From = privateAddress,
+                To = model.To,
+                TokenId  =model.TokenId
+            };
+
+            var mintHandler = web3.Eth.GetContractTransactionHandler<TransferFromFunction>();
+            var result = await mintHandler.SendRequestAndWaitForReceiptAsync(contractAddress, transferFunction);
+            return result.TransactionHash;
+        }
+
+        public async Task<string> OwnerOf(OwnerOfModel model)
+        {
+            var contractAddress = _configuration["Ethereum:ContractAddress"];
+
+            var web3 = _ethHelper.GetWeb3(null);
+            var ownerOfFunction = new OwnerOfFunction()
+            {
+                TokenId = model.TokenId
+            };
+
+            var mintHandler = web3.Eth.GetContractQueryHandler<OwnerOfFunction>();
+            var result = await mintHandler.QueryAsync<string>(contractAddress, ownerOfFunction);
+            return result;
         }
     }
 }

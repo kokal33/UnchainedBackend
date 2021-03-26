@@ -1,6 +1,4 @@
-﻿using Ipfs.Engine;
-using Ipfs.Http;
-using Microsoft.AspNetCore.Http;
+﻿using Ipfs.Http;
 using System.IO;
 using System.Threading.Tasks;
 using UnchainedBackend.Models.PartialModels;
@@ -10,25 +8,25 @@ namespace UnchainedBackend.Repos
 
     public interface IStorageRepo
     {
-        Task<bool> UploadFile(MintModel model);
+        Task<string> UploadFile(MintModel model);
         Task<Stream> DownloadFile(DownloadFileModel model);
     }
 
     public class StorageRepo : IStorageRepo
     {
 
-        public async Task<bool> UploadFile(MintModel model) {
+        public async Task<string> UploadFile(MintModel model) {
             IpfsClient client = new IpfsClient();
             
             var fileExtension = Path.GetExtension(model.File.FileName);
-            var filePath = Path.GetTempFileName();
+            var filePath = Path.GetTempFileName() + fileExtension;
 
             using (var stream = File.Create(filePath)) {
                 await model.File.CopyToAsync(stream);
             }
 
-            var kokal = await client.FileSystem.AddFileAsync(filePath);
-            return true;
+            var upload = await client.FileSystem.AddFileAsync(filePath);
+            return upload.Id;
         }
 
         public async Task<Stream> DownloadFile(DownloadFileModel model) {

@@ -23,4 +23,8 @@
     <PackageReference Include="Nethereum.Web3" Version="3.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\ViewModels\" />
+  </ItemGroup>
+
 </Project>
