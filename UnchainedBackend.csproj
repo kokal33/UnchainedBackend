@@ -15,12 +15,23 @@
     <PackageReference Include="Ipfs.Core" Version="0.55.0" />
     <PackageReference Include="Ipfs.Engine" Version="0.13.0" />
     <PackageReference Include="Ipfs.Http.Client" Version="0.33.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Nethereum.ABI" Version="3.8.0" />
     <PackageReference Include="Nethereum.Autogen.ContractApi" Version="3.6.2" />
     <PackageReference Include="Nethereum.Contracts" Version="3.8.0" />
     <PackageReference Include="Nethereum.HdWallet" Version="3.8.0" />
     <PackageReference Include="Nethereum.StandardNonFungibleTokenERC721" Version="3.8.0" />
     <PackageReference Include="Nethereum.Web3" Version="3.8.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
