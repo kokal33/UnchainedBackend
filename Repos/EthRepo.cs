@@ -15,7 +15,7 @@ namespace UnchainedBackend.Repos
     {
         Task<string> DeployAndCall(DeployContractModel model);
         Task<int> GetBalanceOfAddress(GetAccountBalanceModel model);
-        Task<TransactionReceipt> MintWithTokenURI(MintModel model);
+        Task<TransactionReceipt> MintWithTokenURI(MintWithTokenURIModel model);
         Task<int> GetContractSupply();
         Task<string> GetTokenURI(GetTokenURIModel model);
         Task<string> TransferTo(TransferToModel model);
@@ -66,7 +66,7 @@ namespace UnchainedBackend.Repos
         }
 
         //TODO: Maybe dont send file to mint function, we don't need it
-        public async Task<TransactionReceipt> MintWithTokenURI(MintModel model) {
+        public async Task<TransactionReceipt> MintWithTokenURI(MintWithTokenURIModel model) {
             var privateKey = _configuration["Ethereum:PrivateKey"];
             var contractAddress = _configuration["Ethereum:ContractAddress"];
 
@@ -75,8 +75,8 @@ namespace UnchainedBackend.Repos
             
             var tokenURIFunction = new MintWithTokenURIFunction()
             {
-                To = account.Address,
-                TokenURI = model.TokenURI,
+                To = model.To ?? account.Address,
+                TokenURI = model.Metadata
             };
 
             var mintHandler = web3.Eth.GetContractTransactionHandler<MintWithTokenURIFunction>();
