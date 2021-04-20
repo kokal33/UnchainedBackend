@@ -1,23 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using UnchainedBackend.Models;
 
 namespace UnchainedBackend.Data
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext :DbContext
     {
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
         }
-        public DbSet<Artist> Artists { get; set; }
         public DbSet<Track> Tracks { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<User>().Property(x => x.PublicAddress)
+                .ValueGeneratedOnAdd();
         }
 
         public override int SaveChanges()

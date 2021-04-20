@@ -117,5 +117,13 @@ namespace UnchainedBackend.Controllers
             var result = await _ethRepo.OwnerOf(model);
             return Ok(result);
         }
+
+        [HttpPost]
+        public IActionResult VerifySignature([FromBody] SignatureModel model)
+        {
+            var result = _ethRepo.VerifySignature(model);
+            return Ok(result);
+        }
+
     }
 }

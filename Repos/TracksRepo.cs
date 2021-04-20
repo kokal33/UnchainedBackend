@@ -6,46 +6,46 @@ using UnchainedBackend.Models;
 
 namespace UnchainedBackend.Repos
 {
-    public interface IArtistsRepo 
+    public interface ITracksRepo
     {
-        Task<IEnumerable<Artist>> GetArtists();
-        Task<Artist> GetArtist(int id);
-        Task<bool> PostArtist(Artist artist);
-        Task<bool> DeleteArtist(int id);
+        Task<IEnumerable<Track>> GetTracks();
+        Task<Track> GetTrack(int id);
+        Task<bool> PostTrack(Track track);
+        Task<bool> DeleteTrack(int id);
     }
-    public class ArtistsRepo : IArtistsRepo
+    public class TracksRepo : ITracksRepo
     {
         private readonly ApplicationContext _context;
 
-        public ArtistsRepo(ApplicationContext context)
+        public TracksRepo(ApplicationContext context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Artist>> GetArtists()
+        public async Task<IEnumerable<Track>> GetTracks()
         {
-            return await _context.Artists.ToListAsync();
+            return await _context.Tracks.ToListAsync();
         }
 
-        public async Task<Artist> GetArtist(int id)
+        public async Task<Track> GetTrack(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
-            return artist;
+            var track = await _context.Tracks.Include(x => x.OwnerOf).FirstOrDefaultAsync(t => t.Id == id);
+            return track;
         }       
 
-        public async Task<bool> PostArtist(Artist artist)
+        public async Task<bool> PostTrack(Track track)
         {
-            _context.Artists.Add(artist);
+            _context.Tracks.Add(track);
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<bool> DeleteArtist(int id)
+        public async Task<bool> DeleteTrack(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
+            var track = await _context.Tracks.FindAsync(id);
 
-            _context.Artists.Remove(artist);
+            _context.Tracks.Remove(track);
             await _context.SaveChangesAsync();
             return true;
         }

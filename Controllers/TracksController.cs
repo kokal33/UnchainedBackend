@@ -21,9 +21,9 @@ namespace UnchainedBackend.Controllers
             return Ok(tracks);
         }
         [HttpPost]
-        public async Task<IActionResult> GetTrack([FromBody] IdModel model)
+        public async Task<IActionResult> GetTrack([FromBody] int Id)
         {
-            var track = await _tracksRepo.GetTrack(model.Id);
+            var track = await _tracksRepo.GetTrack(Id);
             if (track == null) return NoContent();
             return Ok(track);
         }
@@ -36,9 +36,9 @@ namespace UnchainedBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteTrack([FromBody] IdModel model)
+        public async Task<IActionResult> DeleteTrack([FromBody] int Id)
         {
-            var result = await _tracksRepo.DeleteTrack(model.Id);
+            var result = await _tracksRepo.DeleteTrack(Id);
             return Ok(result);
         }
     }

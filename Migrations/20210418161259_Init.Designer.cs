@@ -9,8 +9,8 @@ using UnchainedBackend.Data;
 namespace UnchainedBackend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210329161516_Initial")]
-    partial class Initial
+    [Migration("20210418161259_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,30 +19,6 @@ namespace UnchainedBackend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-            modelBuilder.Entity("UnchainedBackend.Models.Artist", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Bio")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProfilePic")
-                        .HasColumnType("text");
-
-                    b.Property<string>("WalletAddress")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Artists");
-                });
 
             modelBuilder.Entity("UnchainedBackend.Models.Track", b =>
                 {
@@ -60,25 +36,60 @@ namespace UnchainedBackend.Migrations
                     b.Property<int>("OwnerOfId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("OwnerOfPublicAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerOfId");
+                    b.HasIndex("OwnerOfPublicAddress");
 
                     b.ToTable("Tracks");
                 });
 
+            modelBuilder.Entity("UnchainedBackend.Models.User", b =>
+                {
+                    b.Property<string>("PublicAddress")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfilePic")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Signature")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Verified")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("PublicAddress");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("UnchainedBackend.Models.Track", b =>
                 {
-                    b.HasOne("UnchainedBackend.Models.Artist", "OwnerOf")
-                        .WithMany()
-                        .HasForeignKey("OwnerOfId")
+                    b.HasOne("UnchainedBackend.Models.User", "OwnerOf")
+                        .WithMany("Tracks")
+                        .HasForeignKey("OwnerOfPublicAddress")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("OwnerOf");
+                });
+
+            modelBuilder.Entity("UnchainedBackend.Models.User", b =>
+                {
+                    b.Navigation("Tracks");
                 });
 #pragma warning restore 612, 618
         }

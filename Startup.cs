@@ -30,8 +30,10 @@ namespace UnchainedBackend
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.WithOrigins("http://billing.asteriskdoo.si",
-                                                           "http://192.168.190.10", //TODO: Change ip to frontend
+                                      builder.WithOrigins("https://unchained-music.com",
+                                                           "https://www.unchained-music.com",
+                                                           "http://192.168.190.30",
+                                                           "https://192.168.190.30",
                                                            "http://localhost:4200")
                                       .AllowAnyHeader().AllowAnyMethod();
                                   });
@@ -42,7 +44,7 @@ namespace UnchainedBackend
             services.AddScoped<IEthRepo, EthRepo>();
             services.AddScoped<IEthHelper, EthHelper>();
             services.AddScoped<IStorageRepo, StorageRepo>();
-            services.AddScoped<IArtistsRepo, ArtistsRepo>();
+            services.AddScoped<IUsersRepo, UsersRepo>();
             services.AddScoped<ITracksRepo, TracksRepo>();
         }
 
@@ -56,19 +58,13 @@ namespace UnchainedBackend
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
             // Apply Migrations
             context.Database.Migrate();
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
-            app.UseAuthorization();
-
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

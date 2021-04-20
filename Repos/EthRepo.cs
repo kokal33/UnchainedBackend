@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Nethereum.RPC.Eth.DTOs;
+using Nethereum.Signer;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace UnchainedBackend.Repos
         Task<string> GetTokenURI(GetTokenURIModel model);
         Task<string> TransferTo(TransferToModel model);
         Task<string> OwnerOf(OwnerOfModel model);
+        string VerifySignature(SignatureModel model);
 
     }
 
@@ -65,7 +67,6 @@ namespace UnchainedBackend.Repos
             return service.ContractHandler.ContractAddress;
         }
 
-        //TODO: Maybe dont send file to mint function, we don't need it
         public async Task<TransactionReceipt> MintWithTokenURI(MintWithTokenURIModel model) {
             var privateKey = _configuration["Ethereum:PrivateKey"];
             var contractAddress = _configuration["Ethereum:ContractAddress"];
@@ -143,6 +144,14 @@ namespace UnchainedBackend.Repos
             var mintHandler = web3.Eth.GetContractQueryHandler<OwnerOfFunction>();
             var result = await mintHandler.QueryAsync<string>(contractAddress, ownerOfFunction);
             return result;
+        }
+
+        public string VerifySignature(SignatureModel model)
+        {
+            string msg = "Hello, Guest! Please sign this message in order to login";
+            string signature = "0xc01fb8beb629efc5814c1dedb4c90343f9af32cbdf9d2766c595e6b6c5e3e9ea6b890cbc267c939f11e73057136c100d1e88a3793710317a5b645bf2cd1bae5b1b";
+            var signer = new EthereumMessageSigner();
+            return signer.EncodeUTF8AndEcRecover(msg, signature);
         }
     }
 }

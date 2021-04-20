@@ -3,24 +3,24 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace UnchainedBackend.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Artists",
+                name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PublicAddress = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    WalletAddress = table.Column<string>(type: "text", nullable: true),
+                    Signature = table.Column<string>(type: "text", nullable: true),
                     Bio = table.Column<string>(type: "text", nullable: true),
-                    ProfilePic = table.Column<string>(type: "text", nullable: true)
+                    ProfilePic = table.Column<string>(type: "text", nullable: true),
+                    Verified = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Artists", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.PublicAddress);
                 });
 
             migrationBuilder.CreateTable(
@@ -32,23 +32,24 @@ namespace UnchainedBackend.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Image = table.Column<string>(type: "text", nullable: true),
+                    OwnerOfPublicAddress = table.Column<string>(type: "text", nullable: false),
                     OwnerOfId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tracks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tracks_Artists_OwnerOfId",
-                        column: x => x.OwnerOfId,
-                        principalTable: "Artists",
-                        principalColumn: "Id",
+                        name: "FK_Tracks_Users_OwnerOfPublicAddress",
+                        column: x => x.OwnerOfPublicAddress,
+                        principalTable: "Users",
+                        principalColumn: "PublicAddress",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tracks_OwnerOfId",
+                name: "IX_Tracks_OwnerOfPublicAddress",
                 table: "Tracks",
-                column: "OwnerOfId");
+                column: "OwnerOfPublicAddress");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -57,7 +58,7 @@ namespace UnchainedBackend.Migrations
                 name: "Tracks");
 
             migrationBuilder.DropTable(
-                name: "Artists");
+                name: "Users");
         }
     }
 }
