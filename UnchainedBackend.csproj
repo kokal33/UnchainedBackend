@@ -5,13 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="UnchainedToken\bin\**" />
-    <Content Remove="UnchainedToken\bin\**" />
-    <EmbeddedResource Remove="UnchainedToken\bin\**" />
-    <None Remove="UnchainedToken\bin\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Ipfs.Core" Version="0.55.0" />
     <PackageReference Include="Ipfs.Engine" Version="0.13.0" />
     <PackageReference Include="Ipfs.Http.Client" Version="0.33.0" />
@@ -36,6 +29,8 @@
 
   <ItemGroup>
     <Folder Include="Models\ViewModels\" />
+    <Folder Include="UnchainedToken\ABI\" />
+    <Folder Include="UnchainedToken\Bin\" />
   </ItemGroup>
 
 </Project>

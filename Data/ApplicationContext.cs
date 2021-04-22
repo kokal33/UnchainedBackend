@@ -10,12 +10,15 @@ namespace UnchainedBackend.Data
         }
         public DbSet<Track> Tracks { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Artist> Artists { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<User>().Property(x => x.PublicAddress)
+                .ValueGeneratedOnAdd();
+            builder.Entity<Artist>().Property(x => x.PublicAddress)
                 .ValueGeneratedOnAdd();
         }
 
