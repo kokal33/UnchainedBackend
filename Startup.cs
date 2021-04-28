@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using UnchainedBackend.Chat;
 using UnchainedBackend.Data;
 using UnchainedBackend.Helpers;
 using UnchainedBackend.Repos;
@@ -38,6 +39,7 @@ namespace UnchainedBackend
                                       .AllowAnyHeader().AllowAnyMethod();
                                   });
             });
+            services.AddSignalR();
             services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(Configuration["Data:DbContext:ConnectionString"]));
 
             services.AddControllersWithViews();
@@ -46,6 +48,8 @@ namespace UnchainedBackend
             services.AddScoped<IStorageRepo, StorageRepo>();
             services.AddScoped<IUsersRepo, UsersRepo>();
             services.AddScoped<ITracksRepo, TracksRepo>();
+            services.AddScoped<IBidsRepo, BidsRepo>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,6 +74,7 @@ namespace UnchainedBackend
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }

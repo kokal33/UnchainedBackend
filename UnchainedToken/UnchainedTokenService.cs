@@ -53,15 +53,15 @@ namespace UnchainedBackend.UnchainedToken
             return ContractHandler.QueryAsync<DEFAULT_ADMIN_ROLEFunction, byte[]>(null, blockParameter);
         }
 
-        public Task<byte[]> MINTER_ROLEQueryAsync(MINTER_ROLEFunction mINTER_ROLEFunction, BlockParameter blockParameter = null)
+        public Task<byte[]> GOVERNOR_ROLEQueryAsync(GOVERNOR_ROLEFunction gOVERNOR_ROLEFunction, BlockParameter blockParameter = null)
         {
-            return ContractHandler.QueryAsync<MINTER_ROLEFunction, byte[]>(mINTER_ROLEFunction, blockParameter);
+            return ContractHandler.QueryAsync<GOVERNOR_ROLEFunction, byte[]>(gOVERNOR_ROLEFunction, blockParameter);
         }
 
         
-        public Task<byte[]> MINTER_ROLEQueryAsync(BlockParameter blockParameter = null)
+        public Task<byte[]> GOVERNOR_ROLEQueryAsync(BlockParameter blockParameter = null)
         {
-            return ContractHandler.QueryAsync<MINTER_ROLEFunction, byte[]>(null, blockParameter);
+            return ContractHandler.QueryAsync<GOVERNOR_ROLEFunction, byte[]>(null, blockParameter);
         }
 
         public Task<string> ApproveRequestAsync(ApproveFunction approveFunction)
@@ -230,34 +230,6 @@ namespace UnchainedBackend.UnchainedToken
                 isApprovedForAllFunction.Operator = operator1;
             
             return ContractHandler.QueryAsync<IsApprovedForAllFunction, bool>(isApprovedForAllFunction, blockParameter);
-        }
-
-        public Task<string> MintWithTokenURIRequestAsync(MintWithTokenURIFunction mintWithTokenURIFunction)
-        {
-             return ContractHandler.SendRequestAsync(mintWithTokenURIFunction);
-        }
-
-        public Task<TransactionReceipt> MintWithTokenURIRequestAndWaitForReceiptAsync(MintWithTokenURIFunction mintWithTokenURIFunction, CancellationTokenSource cancellationToken = null)
-        {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(mintWithTokenURIFunction, cancellationToken);
-        }
-
-        public Task<string> MintWithTokenURIRequestAsync(string to, string tokenURI)
-        {
-            var mintWithTokenURIFunction = new MintWithTokenURIFunction();
-                mintWithTokenURIFunction.To = to;
-                mintWithTokenURIFunction.TokenURI = tokenURI;
-            
-             return ContractHandler.SendRequestAsync(mintWithTokenURIFunction);
-        }
-
-        public Task<TransactionReceipt> MintWithTokenURIRequestAndWaitForReceiptAsync(string to, string tokenURI, CancellationTokenSource cancellationToken = null)
-        {
-            var mintWithTokenURIFunction = new MintWithTokenURIFunction();
-                mintWithTokenURIFunction.To = to;
-                mintWithTokenURIFunction.TokenURI = tokenURI;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(mintWithTokenURIFunction, cancellationToken);
         }
 
         public Task<string> NameQueryAsync(NameFunction nameFunction, BlockParameter blockParameter = null)
@@ -528,6 +500,71 @@ namespace UnchainedBackend.UnchainedToken
                 transferFromFunction.TokenId = tokenId;
             
              return ContractHandler.SendRequestAndWaitForReceiptAsync(transferFromFunction, cancellationToken);
+        }
+
+        public Task<string> MintWithTokenURIRequestAsync(MintWithTokenURIFunction mintWithTokenURIFunction)
+        {
+             return ContractHandler.SendRequestAsync(mintWithTokenURIFunction);
+        }
+
+        public Task<TransactionReceipt> MintWithTokenURIRequestAndWaitForReceiptAsync(MintWithTokenURIFunction mintWithTokenURIFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(mintWithTokenURIFunction, cancellationToken);
+        }
+
+        public Task<string> MintWithTokenURIRequestAsync(string to, string tokenURI)
+        {
+            var mintWithTokenURIFunction = new MintWithTokenURIFunction();
+                mintWithTokenURIFunction.To = to;
+                mintWithTokenURIFunction.TokenURI = tokenURI;
+            
+             return ContractHandler.SendRequestAsync(mintWithTokenURIFunction);
+        }
+
+        public Task<TransactionReceipt> MintWithTokenURIRequestAndWaitForReceiptAsync(string to, string tokenURI, CancellationTokenSource cancellationToken = null)
+        {
+            var mintWithTokenURIFunction = new MintWithTokenURIFunction();
+                mintWithTokenURIFunction.To = to;
+                mintWithTokenURIFunction.TokenURI = tokenURI;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(mintWithTokenURIFunction, cancellationToken);
+        }
+
+        public Task<string> SetGovernorRequestAsync(SetGovernorFunction setGovernorFunction)
+        {
+             return ContractHandler.SendRequestAsync(setGovernorFunction);
+        }
+
+        public Task<TransactionReceipt> SetGovernorRequestAndWaitForReceiptAsync(SetGovernorFunction setGovernorFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setGovernorFunction, cancellationToken);
+        }
+
+        public Task<string> SetGovernorRequestAsync(string to)
+        {
+            var setGovernorFunction = new SetGovernorFunction();
+                setGovernorFunction.To = to;
+            
+             return ContractHandler.SendRequestAsync(setGovernorFunction);
+        }
+
+        public Task<TransactionReceipt> SetGovernorRequestAndWaitForReceiptAsync(string to, CancellationTokenSource cancellationToken = null)
+        {
+            var setGovernorFunction = new SetGovernorFunction();
+                setGovernorFunction.To = to;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setGovernorFunction, cancellationToken);
+        }
+
+        public Task<string> GetGovernorQueryAsync(GetGovernorFunction getGovernorFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<GetGovernorFunction, string>(getGovernorFunction, blockParameter);
+        }
+
+        
+        public Task<string> GetGovernorQueryAsync(BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<GetGovernorFunction, string>(null, blockParameter);
         }
     }
 }

@@ -29,8 +29,6 @@
 
   <ItemGroup>
     <Folder Include="Models\ViewModels\" />
-    <Folder Include="UnchainedToken\ABI\" />
-    <Folder Include="UnchainedToken\Bin\" />
   </ItemGroup>
 
 </Project>

@@ -60,7 +60,7 @@ namespace UnchainedBackend.Controllers
             var encryptPath = EncryptionHelper.Encrypt(uploadedFileLink, model.Password);
 
             // 3. GET the link to decrypt the audio file
-            var magicPartial = Url.Action("DecryptFileLink", "Storage", new { magicLink = encryptPath });
+            var magicPartial = Url.Action("DecryptFileLink", new { magicLink = encryptPath });
             var magicUrl = "www.unchained-music.com" + magicPartial;
             // 4. Form the METADATA for the NFT and upload to IPFS
             MetadataModel metadataModel = new()
@@ -125,5 +125,11 @@ namespace UnchainedBackend.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        public IActionResult GrantMarketPlaceRole([FromBody] IdModel model)
+        {
+            var result = _ethRepo.SetGovernor(model.PublicAddress);
+            return Ok(result);
+        }
     }
 }

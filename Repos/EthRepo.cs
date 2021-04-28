@@ -22,8 +22,8 @@ namespace UnchainedBackend.Repos
         Task<string> TransferTo(TransferToModel model);
         Task<string> OwnerOf(OwnerOfModel model);
         string VerifySignature(SignatureModel model);
-
-    }
+        Task<string> SetGovernor(string publicAddress);
+     }
 
     public class EthRepo : IEthRepo
     {
@@ -153,5 +153,21 @@ namespace UnchainedBackend.Repos
             var signer = new EthereumMessageSigner();
             return signer.EncodeUTF8AndEcRecover(msg, signature);
         }
+
+        public async Task<string> SetGovernor(string publicAddress)
+        {
+            var contractAddress = _configuration["Ethereum:ContractAddress"];
+            var web3 = _ethHelper.GetWeb3(null);
+
+            var transferFunction = new SetGovernorFunction()
+            {
+                To = publicAddress
+            };
+
+            var mintHandler = web3.Eth.GetContractTransactionHandler<SetGovernorFunction>();
+            var result = await mintHandler.SendRequestAsync(contractAddress, transferFunction);
+            return result;
+        }
+
     }
 }
