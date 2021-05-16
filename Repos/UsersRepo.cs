@@ -57,10 +57,21 @@ namespace UnchainedBackend.Repos
 
         public async Task<bool> UpdateUser(User user)
         {
-            _context.Update(user);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(x=>x.PublicAddress == user.PublicAddress);
+            if (existingUser.IsArtist == false && user.IsArtist == true)
+            {
+                PendingArtist pendingArtist = new() { ArtistPublicAddress = user.PublicAddress };
+                await _context.PendingArtists.AddAsync(pendingArtist);
+            }
+
+            _context.Entry(existingUser).CurrentValues.SetValues(user);
             await _context.SaveChangesAsync();
             return true;
         }
 
+        public async Task<IEnumerable<User>> GetArtists()
+        {
+            return await _context.Users.Where(x=>x.IsArtist==true).ToListAsync();
+        }
     }
 }

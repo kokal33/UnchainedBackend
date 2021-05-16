@@ -10,7 +10,7 @@ using UnchainedBackend.Data;
 namespace UnchainedBackend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210428092001_Init")]
+    [Migration("20210516112817_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,14 +23,14 @@ namespace UnchainedBackend.Migrations
 
             modelBuilder.Entity("UnchainedBackend.Models.Bid", b =>
                 {
-                    b.Property<string>("PublicAddress")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
                         .HasColumnType("text");
 
                     b.Property<int>("AmountInBsc")
                         .HasColumnType("integer");
 
-                    b.Property<string>("NFT")
+                    b.Property<string>("PublicAddress")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("Signature")
@@ -42,11 +42,28 @@ namespace UnchainedBackend.Migrations
                     b.Property<int?>("TrackId")
                         .HasColumnType("integer");
 
-                    b.HasKey("PublicAddress");
+                    b.HasKey("Id");
 
                     b.HasIndex("TrackId");
 
                     b.ToTable("Bids");
+                });
+
+            modelBuilder.Entity("UnchainedBackend.Models.PendingArtist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ArtistPublicAddress")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtistPublicAddress");
+
+                    b.ToTable("PendingArtists");
                 });
 
             modelBuilder.Entity("UnchainedBackend.Models.Track", b =>
@@ -81,11 +98,25 @@ namespace UnchainedBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
+                    b.Property<string>("BandCamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Beatport")
+                        .HasColumnType("text");
+
                     b.Property<string>("Bio")
                         .HasColumnType("text");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
+                    b.Property<string>("Facebook")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Instagram")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsArtist")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LinkedIn")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -97,42 +128,18 @@ namespace UnchainedBackend.Migrations
                     b.Property<string>("Signature")
                         .HasColumnType("text");
 
-                    b.Property<bool>("Verified")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("PublicAddress");
-
-                    b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
-                });
-
-            modelBuilder.Entity("UnchainedBackend.Models.Artist", b =>
-                {
-                    b.HasBaseType("UnchainedBackend.Models.User");
-
-                    b.Property<string>("BandCamp")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Beatport")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Facebook")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Instagram")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LinkedIn")
-                        .HasColumnType("text");
-
                     b.Property<string>("SoundCloud")
                         .HasColumnType("text");
 
                     b.Property<string>("Twitter")
                         .HasColumnType("text");
 
-                    b.HasDiscriminator().HasValue("Artist");
+                    b.Property<bool>("Verified")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("PublicAddress");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("UnchainedBackend.Models.Bid", b =>
@@ -140,6 +147,15 @@ namespace UnchainedBackend.Migrations
                     b.HasOne("UnchainedBackend.Models.Track", null)
                         .WithMany("Bids")
                         .HasForeignKey("TrackId");
+                });
+
+            modelBuilder.Entity("UnchainedBackend.Models.PendingArtist", b =>
+                {
+                    b.HasOne("UnchainedBackend.Models.User", "Artist")
+                        .WithMany()
+                        .HasForeignKey("ArtistPublicAddress");
+
+                    b.Navigation("Artist");
                 });
 
             modelBuilder.Entity("UnchainedBackend.Models.Track", b =>

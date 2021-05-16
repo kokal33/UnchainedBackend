@@ -17,8 +17,8 @@ namespace UnchainedBackend.Migrations
                     Signature = table.Column<string>(type: "text", nullable: true),
                     Bio = table.Column<string>(type: "text", nullable: true),
                     ProfilePic = table.Column<string>(type: "text", nullable: true),
+                    IsArtist = table.Column<bool>(type: "boolean", nullable: false),
                     Verified = table.Column<bool>(type: "boolean", nullable: false),
-                    Discriminator = table.Column<string>(type: "text", nullable: false),
                     Twitter = table.Column<string>(type: "text", nullable: true),
                     Facebook = table.Column<string>(type: "text", nullable: true),
                     Instagram = table.Column<string>(type: "text", nullable: true),
@@ -30,6 +30,25 @@ namespace UnchainedBackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.PublicAddress);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PendingArtists",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ArtistPublicAddress = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PendingArtists", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PendingArtists_Users_ArtistPublicAddress",
+                        column: x => x.ArtistPublicAddress,
+                        principalTable: "Users",
+                        principalColumn: "PublicAddress",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,16 +77,16 @@ namespace UnchainedBackend.Migrations
                 name: "Bids",
                 columns: table => new
                 {
-                    PublicAddress = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    PublicAddress = table.Column<string>(type: "text", nullable: true),
                     Signature = table.Column<string>(type: "text", nullable: true),
                     AmountInBsc = table.Column<int>(type: "integer", nullable: false),
-                    NFT = table.Column<string>(type: "text", nullable: true),
                     Timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     TrackId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bids", x => x.PublicAddress);
+                    table.PrimaryKey("PK_Bids", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Bids_Tracks_TrackId",
                         column: x => x.TrackId,
@@ -82,6 +101,11 @@ namespace UnchainedBackend.Migrations
                 column: "TrackId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PendingArtists_ArtistPublicAddress",
+                table: "PendingArtists",
+                column: "ArtistPublicAddress");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tracks_OwnerOfId",
                 table: "Tracks",
                 column: "OwnerOfId");
@@ -91,6 +115,9 @@ namespace UnchainedBackend.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Bids");
+
+            migrationBuilder.DropTable(
+                name: "PendingArtists");
 
             migrationBuilder.DropTable(
                 name: "Tracks");
