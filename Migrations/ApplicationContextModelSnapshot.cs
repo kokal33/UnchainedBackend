@@ -77,15 +77,24 @@ namespace UnchainedBackend.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("text");
 
-                    b.Property<string>("OwnerOfId")
+                    b.Property<string>("OwnerOfPublicAddress")
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
+                    b.Property<bool>("isAuctioned")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("isListed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("isMinted")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerOfId");
+                    b.HasIndex("OwnerOfPublicAddress");
 
                     b.ToTable("Tracks");
                 });
@@ -160,7 +169,7 @@ namespace UnchainedBackend.Migrations
                 {
                     b.HasOne("UnchainedBackend.Models.User", "OwnerOf")
                         .WithMany("Tracks")
-                        .HasForeignKey("OwnerOfId");
+                        .HasForeignKey("OwnerOfPublicAddress");
 
                     b.Navigation("OwnerOf");
                 });

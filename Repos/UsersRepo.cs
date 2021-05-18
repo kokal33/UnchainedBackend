@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using UnchainedBackend.Data;
 using UnchainedBackend.Helpers;
 using UnchainedBackend.Models;
-using UnchainedBackend.Models.PartialModels;
 
 namespace UnchainedBackend.Repos
 {
     public interface IUsersRepo 
     {
         Task<IEnumerable<User>> GetUsers();
-        Task<User> GetUser(SignatureModel model);
+        Task<User> GetUser(string publicAddress);
+        Task<IEnumerable<User>> GetArtists();
         Task<bool> PostUser(User user);
         Task<bool> DeleteUser(string publicAddress);
         Task<bool> UpdateUser(User user);
@@ -32,10 +32,9 @@ namespace UnchainedBackend.Repos
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<User> GetUser(SignatureModel model)
+        public async Task<User> GetUser(string publicAddress)
         {
-            var user = await _context.Users.FindAsync(model.PublicAddress);
-            return user;
+            return await _context.Users.FindAsync(publicAddress);
         }       
 
         public async Task<bool> PostUser(User user)
@@ -71,7 +70,7 @@ namespace UnchainedBackend.Repos
 
         public async Task<IEnumerable<User>> GetArtists()
         {
-            return await _context.Users.Where(x=>x.IsArtist==true).ToListAsync();
+            return await _context.Users.Where(x=>x.IsArtist).OrderByDescending(x=>x.Verified).ToListAsync();
         }
     }
 }

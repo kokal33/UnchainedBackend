@@ -29,7 +29,7 @@ namespace UnchainedBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> GetUser([FromBody] SignatureModel model)
         {
-            var user = await _usersRepo.GetUser(model);
+            var user = await _usersRepo.GetUser(model.PublicAddress);
             if (user == null) return NoContent();
             return Ok(user);
         }
@@ -40,6 +40,16 @@ namespace UnchainedBackend.Controllers
             var result = await _usersRepo.PostUser(user);
             return Ok(result);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetArtists()
+        {
+            var result = await _usersRepo.GetArtists();
+            if (result == null)
+                return NoContent();
+            return Ok(result);
+        }
+        
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser([FromBody] IdModel model)
@@ -60,7 +70,7 @@ namespace UnchainedBackend.Controllers
         {
             try
             {
-                var user = await _usersRepo.GetUser(model);
+                var user = await _usersRepo.GetUser(model.PublicAddress);
                 // Add user to the DB if doesnt exist
                 if (user == null)
                 {

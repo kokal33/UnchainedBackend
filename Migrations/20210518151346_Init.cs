@@ -60,14 +60,17 @@ namespace UnchainedBackend.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Image = table.Column<string>(type: "text", nullable: true),
-                    OwnerOfId = table.Column<string>(type: "text", nullable: true)
+                    OwnerOfPublicAddress = table.Column<string>(type: "text", nullable: true),
+                    isMinted = table.Column<bool>(type: "boolean", nullable: false),
+                    isAuctioned = table.Column<bool>(type: "boolean", nullable: false),
+                    isListed = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tracks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tracks_Users_OwnerOfId",
-                        column: x => x.OwnerOfId,
+                        name: "FK_Tracks_Users_OwnerOfPublicAddress",
+                        column: x => x.OwnerOfPublicAddress,
                         principalTable: "Users",
                         principalColumn: "PublicAddress",
                         onDelete: ReferentialAction.Restrict);
@@ -106,9 +109,9 @@ namespace UnchainedBackend.Migrations
                 column: "ArtistPublicAddress");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tracks_OwnerOfId",
+                name: "IX_Tracks_OwnerOfPublicAddress",
                 table: "Tracks",
-                column: "OwnerOfId");
+                column: "OwnerOfPublicAddress");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

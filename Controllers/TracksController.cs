@@ -8,9 +8,11 @@ namespace UnchainedBackend.Controllers
     public class TracksController : Controller
     {
         private readonly ITracksRepo _tracksRepo;
+        private readonly IUsersRepo _usersRepo;
 
-        public TracksController(ITracksRepo tracksRepo) {
+        public TracksController(ITracksRepo tracksRepo, IUsersRepo usersRepo) {
             _tracksRepo = tracksRepo;
+            _usersRepo = usersRepo;
         }
 
         [HttpGet]
@@ -31,6 +33,9 @@ namespace UnchainedBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> PostTrack([FromBody] Track track)
         {
+            var ownerOf = await _usersRepo.GetUser(track.OwnerOfPublicAddress);
+            if (ownerOf == null || !ownerOf.Verified)
+                return BadRequest();
             var result = await _tracksRepo.PostTrack(track);
             return Ok(result);
         }
