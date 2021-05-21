@@ -6,5 +6,6 @@
         public string Description { get; set; }
         public string Image { get; set; }
         public string Magic { get; set; }
+        public string File { get; set; }
     }
 }

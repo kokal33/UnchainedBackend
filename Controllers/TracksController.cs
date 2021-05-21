@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using UnchainedBackend.Models;
+using UnchainedBackend.Models.PartialModels;
 using UnchainedBackend.Repos;
 
 namespace UnchainedBackend.Controllers
@@ -31,12 +32,14 @@ namespace UnchainedBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostTrack([FromBody] Track track)
+        public async Task<IActionResult> PostTrack([FromForm] TrackModel model)
         {
-            var ownerOf = await _usersRepo.GetUser(track.OwnerOfPublicAddress);
+            // Check if the request contains file
+            if (model.File == null || model.CoverImage == null) return NoContent();
+            var ownerOf = await _usersRepo.GetUser(model.OwnerOfPublicAddress);
             if (ownerOf == null || !ownerOf.Verified)
                 return BadRequest();
-            var result = await _tracksRepo.PostTrack(track);
+            var result = await _tracksRepo.PostTrack(model);
             return Ok(result);
         }
 

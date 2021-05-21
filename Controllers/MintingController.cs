@@ -18,14 +18,16 @@ namespace UnchainedBackend.Controllers
         private readonly IEthRepo _ethRepo;
         private readonly IStorageRepo _storageRepo;
         private readonly IWebHostEnvironment _env;
+        private readonly ITracksRepo _tracksRepo;
 
-
-        public MintingController(ILogger<MintingController> logger, IEthRepo ethRepo, IStorageRepo storageRepo, IWebHostEnvironment env)
+        public MintingController(ILogger<MintingController> logger, IEthRepo ethRepo, IStorageRepo storageRepo, 
+                                 IWebHostEnvironment env, ITracksRepo tracksRepo)
         {
             _logger = logger;
             _ethRepo = ethRepo;
             _storageRepo = storageRepo;
             _env = env;
+            _tracksRepo = tracksRepo;
         }
 
         /// <summary>
@@ -47,28 +49,32 @@ namespace UnchainedBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Mint([FromForm] MintModel model)
+        public async Task<IActionResult> Mint([FromBody] MintModel model)
         {
             var baseUrl = HttpContext.Request.Host.Value;
+            string magicUrl = null;
 
-            // Check if the request contains file
-            if (model.File == null || model.CoverImage == null) return new UnsupportedMediaTypeResult();
+            var track = await _tracksRepo.GetTrack(model.TrackId);
             // 1. UPLOAD FILES and get files link on IPFS
-            var uploadedFileLink = await _storageRepo.UploadFile(model.File);
-            var uploadedCover = await _storageRepo.UploadFile(model.CoverImage);
-            // 2. ENCRYPT Filename
-            var encryptPath = EncryptionHelper.Encrypt(uploadedFileLink, model.Password);
+            var uploadedFileLink = await _storageRepo.UploadFile(track.FileLocation);
+            var uploadedCover = await _storageRepo.UploadFile(track.ImageLocation);
+            // 2. ENCRYPT Filename if password present
+            if (model.Password != null)
+            {
+                var encryptPath = EncryptionHelper.Encrypt(uploadedFileLink, model.Password);
+                // 3. GET the link to decrypt the audio file
+                var magicPartial = Url.Action("DecryptFileLink", new { magicLink = encryptPath });
+                magicUrl = "www.unchained-music.com" + magicPartial;
+            }
 
-            // 3. GET the link to decrypt the audio file
-            var magicPartial = Url.Action("DecryptFileLink", new { magicLink = encryptPath });
-            var magicUrl = "www.unchained-music.com" + magicPartial;
             // 4. Form the METADATA for the NFT and upload to IPFS
             MetadataModel metadataModel = new()
             {
-                Name = model.Name,
-                Description = model.Description,
+                Name = track.Title,
+                Description = track.Description,
                 Image = uploadedCover,
-                Magic = magicUrl
+                Magic = magicUrl,
+                File = magicUrl == null ? uploadedFileLink : null
             };
             var metadata = JsonSerializer.Serialize(metadataModel);
             var uploadedMetadata = await _storageRepo.UploadText(metadata);
@@ -78,6 +84,8 @@ namespace UnchainedBackend.Controllers
             var mint = await _ethRepo.MintWithTokenURI(forMinting);
             if (mint == null) return UnprocessableEntity();
 
+            // Set track as minted in DB
+            await _tracksRepo.SetIsMinted(track.Id, true);
             MintReturn result = new()
             {
                 TransactionHash = mint.TransactionHash,

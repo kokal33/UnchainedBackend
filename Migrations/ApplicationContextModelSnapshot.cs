@@ -37,7 +37,7 @@ namespace UnchainedBackend.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int?>("TrackId")
+                    b.Property<int>("TrackId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -74,11 +74,17 @@ namespace UnchainedBackend.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("FileLocation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageLocation")
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerOfPublicAddress")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -90,6 +96,9 @@ namespace UnchainedBackend.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("isMinted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("isSold")
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");
@@ -151,9 +160,13 @@ namespace UnchainedBackend.Migrations
 
             modelBuilder.Entity("UnchainedBackend.Models.Bid", b =>
                 {
-                    b.HasOne("UnchainedBackend.Models.Track", null)
+                    b.HasOne("UnchainedBackend.Models.Track", "Track")
                         .WithMany("Bids")
-                        .HasForeignKey("TrackId");
+                        .HasForeignKey("TrackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Track");
                 });
 
             modelBuilder.Entity("UnchainedBackend.Models.PendingArtist", b =>

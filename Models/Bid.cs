@@ -11,5 +11,7 @@ namespace UnchainedBackend.Models
         public string Signature { get; set; }
         public int AmountInBsc { get; set; }
         public DateTime Timestamp { get; set; }
+        public virtual Track Track { get; set; }
+        public int TrackId { get; set; }
     }
 }

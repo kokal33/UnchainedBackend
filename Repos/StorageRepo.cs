@@ -10,7 +10,7 @@ namespace UnchainedBackend.Repos
 
     public interface IStorageRepo
     {
-        Task<string> UploadFile(IFormFile audioFile);
+        Task<string> UploadFile(string filePath);
         Task<string> UploadText(string text);
         string DecryptFileLink(string cipher, string pass);
     }
@@ -18,15 +18,8 @@ namespace UnchainedBackend.Repos
     public class StorageRepo : IStorageRepo
     {
 
-        public async Task<string> UploadFile(IFormFile audioFile) {
+        public async Task<string> UploadFile(string filePath) {
             IpfsClient client = new();
-            
-            var fileExtension = Path.GetExtension(audioFile.FileName);
-            var filePath = Path.GetTempFileName() + fileExtension;
-
-            using (var stream = File.Create(filePath)) {
-                await audioFile.CopyToAsync(stream);
-            }
 
             var upload = await client.FileSystem.AddFileAsync(filePath);
             return upload.Id;

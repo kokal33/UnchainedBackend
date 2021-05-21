@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UnchainedBackend.Data;
-using UnchainedBackend.Helpers;
 using UnchainedBackend.Models;
 
 namespace UnchainedBackend.Repos
@@ -57,6 +56,8 @@ namespace UnchainedBackend.Repos
         public async Task<bool> UpdateUser(User user)
         {
             var existingUser = await _context.Users.FirstOrDefaultAsync(x=>x.PublicAddress == user.PublicAddress);
+            // Persist the signature because we dont get it on update
+            user.Signature = existingUser.Signature;
             if (existingUser.IsArtist == false && user.IsArtist == true)
             {
                 PendingArtist pendingArtist = new() { ArtistPublicAddress = user.PublicAddress };
