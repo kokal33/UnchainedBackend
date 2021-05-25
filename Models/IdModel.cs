@@ -3,6 +3,6 @@ namespace UnchainedBackend.Models
 {
     public class IdModel
     {
-        public string PublicAddress { get; set; }
+        public int Id { get; set; }
     }
 }

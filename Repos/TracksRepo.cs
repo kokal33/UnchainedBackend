@@ -20,7 +20,7 @@ namespace UnchainedBackend.Repos
         Task<bool> UpdateTrack(int trackId, string title, string description, string isMinted, string isAuctioned, string isListed, string isSold);
         Task<bool> SetIsListed(int trackId, bool isListed);
         Task<bool> SetIsSold(int trackId, bool isSold);
-        Task<bool> SetIsMinted(int trackId, bool isMinted);
+        Task<bool> SetIsMinted(Track track, bool isMinted);
         Task<bool> SetIsAuctioned(int trackId, bool isAuctioned);
 
 
@@ -133,9 +133,8 @@ namespace UnchainedBackend.Repos
             return true;
         }
 
-        public async Task<bool> SetIsMinted(int trackId, bool isMinted)
+        public async Task<bool> SetIsMinted(Track track, bool isMinted)
         {
-            Track track = new Track { Id = trackId, isMinted = isMinted };
             _context.Entry(track).Property(x => x.isMinted).IsModified = true;
             await _context.SaveChangesAsync();
             return true;

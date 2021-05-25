@@ -49,7 +49,6 @@ namespace UnchainedBackend
             services.AddScoped<IUsersRepo, UsersRepo>();
             services.AddScoped<ITracksRepo, TracksRepo>();
             services.AddScoped<IBidsRepo, BidsRepo>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

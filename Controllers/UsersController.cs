@@ -52,7 +52,7 @@ namespace UnchainedBackend.Controllers
         
 
         [HttpPost]
-        public async Task<IActionResult> DeleteUser([FromBody] IdModel model)
+        public async Task<IActionResult> DeleteUser([FromBody] SignatureModel model)
         {
             var result = await _usersRepo.DeleteUser(model.PublicAddress);
             return Ok(result);

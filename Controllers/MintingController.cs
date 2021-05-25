@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using UnchainedBackend.Helpers;
 using UnchainedBackend.Models;
@@ -85,7 +86,7 @@ namespace UnchainedBackend.Controllers
             if (mint == null) return UnprocessableEntity();
 
             // Set track as minted in DB
-            await _tracksRepo.SetIsMinted(track.Id, true);
+            await _tracksRepo.SetIsMinted(track, true);
             MintReturn result = new()
             {
                 TransactionHash = mint.TransactionHash,
@@ -134,10 +135,12 @@ namespace UnchainedBackend.Controllers
         }
 
         [HttpPost]
-        public IActionResult GrantMarketPlaceRole([FromBody] IdModel model)
+        public IActionResult StartAuction([FromBody] IdModel model)
         {
-            var result = _ethRepo.SetGovernor(model.PublicAddress);
-            return Ok(result);
+            AuctionTask auctionTask = new AuctionTask(_logger, model.Id);
+            auctionTask.StartAsync(new CancellationToken());
+            return Ok();
         }
+
     }
 }
