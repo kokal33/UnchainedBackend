@@ -15,7 +15,7 @@ namespace UnchainedBackend.Repos
     {
         Task<IEnumerable<Track>> GetTracks();
         Task<Track> GetTrack(int id);
-        Task<Track> PostTrack(TrackModel track);
+        Task<bool> PostTrack(TrackModel track);
         Task<bool> DeleteTrack(int id);
         Task<bool> UpdateTrack(int trackId, string title, string description, string isMinted, string isAuctioned, string isListed, string isSold);
         Task<bool> SetIsListed(int trackId, bool isListed);
@@ -48,7 +48,7 @@ namespace UnchainedBackend.Repos
             return track;
         }       
 
-        public async Task<Track> PostTrack(TrackModel model)
+        public async Task<bool> PostTrack(TrackModel model)
         {
             // Write the track to storage
             string fileContent = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", model.OwnerOfPublicAddress, "Tracks");
@@ -71,7 +71,7 @@ namespace UnchainedBackend.Repos
                 _context.Tracks.Add(newTrack);
             await _context.SaveChangesAsync();
 
-            return newTrack;
+            return true;
         }
 
         public async Task<bool> DeleteTrack(int id)
