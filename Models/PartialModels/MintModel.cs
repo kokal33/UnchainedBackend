@@ -4,8 +4,8 @@ namespace UnchainedBackend.Models.PartialModels
 {
     public class MintModel
     {
-        public string To { get; set; }
         public int TrackId { get; set; }
-        public string Password { get; set; }
+        // TODO: Change encryption to signature of wallet
+        public string Password { get; set; } = "Unchained";
     }
 }

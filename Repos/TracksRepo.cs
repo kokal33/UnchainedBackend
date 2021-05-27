@@ -15,7 +15,7 @@ namespace UnchainedBackend.Repos
     {
         Task<IEnumerable<Track>> GetTracks();
         Task<Track> GetTrack(int id);
-        Task<bool> PostTrack(TrackModel track);
+        Task<int> PostTrack(TrackModel track);
         Task<bool> DeleteTrack(int id);
         Task<bool> UpdateTrack(int trackId, string title, string description, string isMinted, string isAuctioned, string isListed, string isSold);
         Task<bool> SetIsListed(int trackId, bool isListed);
@@ -48,7 +48,7 @@ namespace UnchainedBackend.Repos
             return track;
         }       
 
-        public async Task<bool> PostTrack(TrackModel model)
+        public async Task<int> PostTrack(TrackModel model)
         {
             // Write the track to storage
             string fileContent = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", model.OwnerOfPublicAddress, "Tracks");
@@ -71,7 +71,7 @@ namespace UnchainedBackend.Repos
                 _context.Tracks.Add(newTrack);
             await _context.SaveChangesAsync();
 
-            return true;
+            return newTrack.Id;
         }
 
         public async Task<bool> DeleteTrack(int id)
@@ -135,6 +135,7 @@ namespace UnchainedBackend.Repos
 
         public async Task<bool> SetIsMinted(Track track, bool isMinted)
         {
+            track.isMinted = true;
             _context.Entry(track).Property(x => x.isMinted).IsModified = true;
             await _context.SaveChangesAsync();
             return true;

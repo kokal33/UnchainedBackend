@@ -23,10 +23,10 @@ namespace UnchainedBackend.Helpers
         public Web3 GetWeb3(string accountAddress)
         {
             var privateKey = accountAddress ?? _configuration["Ethereum:PrivateKey"];
-            var contractAddress = _configuration["Ethereum:ContractAddress"];
+            var maticChain = accountAddress ?? _configuration["Ethereum:MaticChain"];
 
             var account = new Account(privateKey);
-            return new Web3(account, "https://data-seed-prebsc-1-s3.binance.org:8545");
+            return new Web3(account, maticChain);
         }
 
         // METAMASK returns uppercase addresses, and BINANCE returns normal

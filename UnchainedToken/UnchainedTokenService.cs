@@ -1,14 +1,7 @@
-using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Numerics;
-using Nethereum.Hex.HexTypes;
-using Nethereum.ABI.FunctionEncoding.Attributes;
-using Nethereum.Web3;
 using Nethereum.RPC.Eth.DTOs;
-using Nethereum.Contracts.CQS;
 using Nethereum.Contracts.ContractHandlers;
-using Nethereum.Contracts;
 using System.Threading;
 using UnchainedBackend.UnchainedToken.ContractDefinition;
 
@@ -40,28 +33,6 @@ namespace UnchainedBackend.UnchainedToken
         {
             Web3 = web3;
             ContractHandler = web3.Eth.GetContractHandler(contractAddress);
-        }
-
-        public Task<byte[]> DEFAULT_ADMIN_ROLEQueryAsync(DEFAULT_ADMIN_ROLEFunction dEFAULT_ADMIN_ROLEFunction, BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<DEFAULT_ADMIN_ROLEFunction, byte[]>(dEFAULT_ADMIN_ROLEFunction, blockParameter);
-        }
-
-        
-        public Task<byte[]> DEFAULT_ADMIN_ROLEQueryAsync(BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<DEFAULT_ADMIN_ROLEFunction, byte[]>(null, blockParameter);
-        }
-
-        public Task<byte[]> GOVERNOR_ROLEQueryAsync(GOVERNOR_ROLEFunction gOVERNOR_ROLEFunction, BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<GOVERNOR_ROLEFunction, byte[]>(gOVERNOR_ROLEFunction, blockParameter);
-        }
-
-        
-        public Task<byte[]> GOVERNOR_ROLEQueryAsync(BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<GOVERNOR_ROLEFunction, byte[]>(null, blockParameter);
         }
 
         public Task<string> ApproveRequestAsync(ApproveFunction approveFunction)
@@ -117,6 +88,20 @@ namespace UnchainedBackend.UnchainedToken
             return ContractHandler.QueryAsync<BaseURIFunction, string>(null, blockParameter);
         }
 
+        public Task<string> CreatorOfQueryAsync(CreatorOfFunction creatorOfFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<CreatorOfFunction, string>(creatorOfFunction, blockParameter);
+        }
+
+        
+        public Task<string> CreatorOfQueryAsync(BigInteger tokenId, BlockParameter blockParameter = null)
+        {
+            var creatorOfFunction = new CreatorOfFunction();
+                creatorOfFunction.TokenId = tokenId;
+            
+            return ContractHandler.QueryAsync<CreatorOfFunction, string>(creatorOfFunction, blockParameter);
+        }
+
         public Task<string> GetApprovedQueryAsync(GetApprovedFunction getApprovedFunction, BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<GetApprovedFunction, string>(getApprovedFunction, blockParameter);
@@ -129,92 +114,6 @@ namespace UnchainedBackend.UnchainedToken
                 getApprovedFunction.TokenId = tokenId;
             
             return ContractHandler.QueryAsync<GetApprovedFunction, string>(getApprovedFunction, blockParameter);
-        }
-
-        public Task<byte[]> GetRoleAdminQueryAsync(GetRoleAdminFunction getRoleAdminFunction, BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<GetRoleAdminFunction, byte[]>(getRoleAdminFunction, blockParameter);
-        }
-
-        
-        public Task<byte[]> GetRoleAdminQueryAsync(byte[] role, BlockParameter blockParameter = null)
-        {
-            var getRoleAdminFunction = new GetRoleAdminFunction();
-                getRoleAdminFunction.Role = role;
-            
-            return ContractHandler.QueryAsync<GetRoleAdminFunction, byte[]>(getRoleAdminFunction, blockParameter);
-        }
-
-        public Task<string> GetRoleMemberQueryAsync(GetRoleMemberFunction getRoleMemberFunction, BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<GetRoleMemberFunction, string>(getRoleMemberFunction, blockParameter);
-        }
-
-        
-        public Task<string> GetRoleMemberQueryAsync(byte[] role, BigInteger index, BlockParameter blockParameter = null)
-        {
-            var getRoleMemberFunction = new GetRoleMemberFunction();
-                getRoleMemberFunction.Role = role;
-                getRoleMemberFunction.Index = index;
-            
-            return ContractHandler.QueryAsync<GetRoleMemberFunction, string>(getRoleMemberFunction, blockParameter);
-        }
-
-        public Task<BigInteger> GetRoleMemberCountQueryAsync(GetRoleMemberCountFunction getRoleMemberCountFunction, BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<GetRoleMemberCountFunction, BigInteger>(getRoleMemberCountFunction, blockParameter);
-        }
-
-        
-        public Task<BigInteger> GetRoleMemberCountQueryAsync(byte[] role, BlockParameter blockParameter = null)
-        {
-            var getRoleMemberCountFunction = new GetRoleMemberCountFunction();
-                getRoleMemberCountFunction.Role = role;
-            
-            return ContractHandler.QueryAsync<GetRoleMemberCountFunction, BigInteger>(getRoleMemberCountFunction, blockParameter);
-        }
-
-        public Task<string> GrantRoleRequestAsync(GrantRoleFunction grantRoleFunction)
-        {
-             return ContractHandler.SendRequestAsync(grantRoleFunction);
-        }
-
-        public Task<TransactionReceipt> GrantRoleRequestAndWaitForReceiptAsync(GrantRoleFunction grantRoleFunction, CancellationTokenSource cancellationToken = null)
-        {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(grantRoleFunction, cancellationToken);
-        }
-
-        public Task<string> GrantRoleRequestAsync(byte[] role, string account)
-        {
-            var grantRoleFunction = new GrantRoleFunction();
-                grantRoleFunction.Role = role;
-                grantRoleFunction.Account = account;
-            
-             return ContractHandler.SendRequestAsync(grantRoleFunction);
-        }
-
-        public Task<TransactionReceipt> GrantRoleRequestAndWaitForReceiptAsync(byte[] role, string account, CancellationTokenSource cancellationToken = null)
-        {
-            var grantRoleFunction = new GrantRoleFunction();
-                grantRoleFunction.Role = role;
-                grantRoleFunction.Account = account;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(grantRoleFunction, cancellationToken);
-        }
-
-        public Task<bool> HasRoleQueryAsync(HasRoleFunction hasRoleFunction, BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<HasRoleFunction, bool>(hasRoleFunction, blockParameter);
-        }
-
-        
-        public Task<bool> HasRoleQueryAsync(byte[] role, string account, BlockParameter blockParameter = null)
-        {
-            var hasRoleFunction = new HasRoleFunction();
-                hasRoleFunction.Role = role;
-                hasRoleFunction.Account = account;
-            
-            return ContractHandler.QueryAsync<HasRoleFunction, bool>(hasRoleFunction, blockParameter);
         }
 
         public Task<bool> IsApprovedForAllQueryAsync(IsApprovedForAllFunction isApprovedForAllFunction, BlockParameter blockParameter = null)
@@ -232,6 +131,34 @@ namespace UnchainedBackend.UnchainedToken
             return ContractHandler.QueryAsync<IsApprovedForAllFunction, bool>(isApprovedForAllFunction, blockParameter);
         }
 
+        public Task<string> MintWithTokenURIRequestAsync(MintWithTokenURIFunction mintWithTokenURIFunction)
+        {
+             return ContractHandler.SendRequestAsync(mintWithTokenURIFunction);
+        }
+
+        public Task<TransactionReceipt> MintWithTokenURIRequestAndWaitForReceiptAsync(MintWithTokenURIFunction mintWithTokenURIFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(mintWithTokenURIFunction, cancellationToken);
+        }
+
+        public Task<string> MintWithTokenURIRequestAsync(string to, string tokenURI)
+        {
+            var mintWithTokenURIFunction = new MintWithTokenURIFunction();
+                mintWithTokenURIFunction.To = to;
+                mintWithTokenURIFunction.TokenURI = tokenURI;
+            
+             return ContractHandler.SendRequestAsync(mintWithTokenURIFunction);
+        }
+
+        public Task<TransactionReceipt> MintWithTokenURIRequestAndWaitForReceiptAsync(string to, string tokenURI, CancellationTokenSource cancellationToken = null)
+        {
+            var mintWithTokenURIFunction = new MintWithTokenURIFunction();
+                mintWithTokenURIFunction.To = to;
+                mintWithTokenURIFunction.TokenURI = tokenURI;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(mintWithTokenURIFunction, cancellationToken);
+        }
+
         public Task<string> NameQueryAsync(NameFunction nameFunction, BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<NameFunction, string>(nameFunction, blockParameter);
@@ -241,6 +168,17 @@ namespace UnchainedBackend.UnchainedToken
         public Task<string> NameQueryAsync(BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<NameFunction, string>(null, blockParameter);
+        }
+
+        public Task<string> OwnerQueryAsync(OwnerFunction ownerFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<OwnerFunction, string>(ownerFunction, blockParameter);
+        }
+
+        
+        public Task<string> OwnerQueryAsync(BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<OwnerFunction, string>(null, blockParameter);
         }
 
         public Task<string> OwnerOfQueryAsync(OwnerOfFunction ownerOfFunction, BlockParameter blockParameter = null)
@@ -257,60 +195,24 @@ namespace UnchainedBackend.UnchainedToken
             return ContractHandler.QueryAsync<OwnerOfFunction, string>(ownerOfFunction, blockParameter);
         }
 
-        public Task<string> RenounceRoleRequestAsync(RenounceRoleFunction renounceRoleFunction)
+        public Task<string> RenounceOwnershipRequestAsync(RenounceOwnershipFunction renounceOwnershipFunction)
         {
-             return ContractHandler.SendRequestAsync(renounceRoleFunction);
+             return ContractHandler.SendRequestAsync(renounceOwnershipFunction);
         }
 
-        public Task<TransactionReceipt> RenounceRoleRequestAndWaitForReceiptAsync(RenounceRoleFunction renounceRoleFunction, CancellationTokenSource cancellationToken = null)
+        public Task<string> RenounceOwnershipRequestAsync()
         {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(renounceRoleFunction, cancellationToken);
+             return ContractHandler.SendRequestAsync<RenounceOwnershipFunction>();
         }
 
-        public Task<string> RenounceRoleRequestAsync(byte[] role, string account)
+        public Task<TransactionReceipt> RenounceOwnershipRequestAndWaitForReceiptAsync(RenounceOwnershipFunction renounceOwnershipFunction, CancellationTokenSource cancellationToken = null)
         {
-            var renounceRoleFunction = new RenounceRoleFunction();
-                renounceRoleFunction.Role = role;
-                renounceRoleFunction.Account = account;
-            
-             return ContractHandler.SendRequestAsync(renounceRoleFunction);
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(renounceOwnershipFunction, cancellationToken);
         }
 
-        public Task<TransactionReceipt> RenounceRoleRequestAndWaitForReceiptAsync(byte[] role, string account, CancellationTokenSource cancellationToken = null)
+        public Task<TransactionReceipt> RenounceOwnershipRequestAndWaitForReceiptAsync(CancellationTokenSource cancellationToken = null)
         {
-            var renounceRoleFunction = new RenounceRoleFunction();
-                renounceRoleFunction.Role = role;
-                renounceRoleFunction.Account = account;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(renounceRoleFunction, cancellationToken);
-        }
-
-        public Task<string> RevokeRoleRequestAsync(RevokeRoleFunction revokeRoleFunction)
-        {
-             return ContractHandler.SendRequestAsync(revokeRoleFunction);
-        }
-
-        public Task<TransactionReceipt> RevokeRoleRequestAndWaitForReceiptAsync(RevokeRoleFunction revokeRoleFunction, CancellationTokenSource cancellationToken = null)
-        {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(revokeRoleFunction, cancellationToken);
-        }
-
-        public Task<string> RevokeRoleRequestAsync(byte[] role, string account)
-        {
-            var revokeRoleFunction = new RevokeRoleFunction();
-                revokeRoleFunction.Role = role;
-                revokeRoleFunction.Account = account;
-            
-             return ContractHandler.SendRequestAsync(revokeRoleFunction);
-        }
-
-        public Task<TransactionReceipt> RevokeRoleRequestAndWaitForReceiptAsync(byte[] role, string account, CancellationTokenSource cancellationToken = null)
-        {
-            var revokeRoleFunction = new RevokeRoleFunction();
-                revokeRoleFunction.Role = role;
-                revokeRoleFunction.Account = account;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(revokeRoleFunction, cancellationToken);
+             return ContractHandler.SendRequestAndWaitForReceiptAsync<RenounceOwnershipFunction>(null, cancellationToken);
         }
 
         public Task<string> SafeTransferFromRequestAsync(SafeTransferFromFunction safeTransferFromFunction)
@@ -341,29 +243,7 @@ namespace UnchainedBackend.UnchainedToken
                 safeTransferFromFunction.TokenId = tokenId;
             
              return ContractHandler.SendRequestAndWaitForReceiptAsync(safeTransferFromFunction, cancellationToken);
-        }
-
-        public Task<string> SafeTransferFromRequestAsync(string from, string to, BigInteger tokenId, byte[] data)
-        {
-            var safeTransferFromFunction = new SafeTransferFromFunction();
-                safeTransferFromFunction.From = from;
-                safeTransferFromFunction.To = to;
-                safeTransferFromFunction.TokenId = tokenId;
-                safeTransferFromFunction.Data = data;
-            
-             return ContractHandler.SendRequestAsync(safeTransferFromFunction);
-        }
-
-        public Task<TransactionReceipt> SafeTransferFromRequestAndWaitForReceiptAsync(string from, string to, BigInteger tokenId, byte[] data, CancellationTokenSource cancellationToken = null)
-        {
-            var safeTransferFromFunction = new SafeTransferFromFunction();
-                safeTransferFromFunction.From = from;
-                safeTransferFromFunction.To = to;
-                safeTransferFromFunction.TokenId = tokenId;
-                safeTransferFromFunction.Data = data;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(safeTransferFromFunction, cancellationToken);
-        }
+        }      
 
         public Task<string> SetApprovalForAllRequestAsync(SetApprovalForAllFunction setApprovalForAllFunction)
         {
@@ -502,69 +382,30 @@ namespace UnchainedBackend.UnchainedToken
              return ContractHandler.SendRequestAndWaitForReceiptAsync(transferFromFunction, cancellationToken);
         }
 
-        public Task<string> MintWithTokenURIRequestAsync(MintWithTokenURIFunction mintWithTokenURIFunction)
+        public Task<string> TransferOwnershipRequestAsync(TransferOwnershipFunction transferOwnershipFunction)
         {
-             return ContractHandler.SendRequestAsync(mintWithTokenURIFunction);
+             return ContractHandler.SendRequestAsync(transferOwnershipFunction);
         }
 
-        public Task<TransactionReceipt> MintWithTokenURIRequestAndWaitForReceiptAsync(MintWithTokenURIFunction mintWithTokenURIFunction, CancellationTokenSource cancellationToken = null)
+        public Task<TransactionReceipt> TransferOwnershipRequestAndWaitForReceiptAsync(TransferOwnershipFunction transferOwnershipFunction, CancellationTokenSource cancellationToken = null)
         {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(mintWithTokenURIFunction, cancellationToken);
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(transferOwnershipFunction, cancellationToken);
         }
 
-        public Task<string> MintWithTokenURIRequestAsync(string to, string tokenURI)
+        public Task<string> TransferOwnershipRequestAsync(string newOwner)
         {
-            var mintWithTokenURIFunction = new MintWithTokenURIFunction();
-                mintWithTokenURIFunction.To = to;
-                mintWithTokenURIFunction.TokenURI = tokenURI;
+            var transferOwnershipFunction = new TransferOwnershipFunction();
+                transferOwnershipFunction.NewOwner = newOwner;
             
-             return ContractHandler.SendRequestAsync(mintWithTokenURIFunction);
+             return ContractHandler.SendRequestAsync(transferOwnershipFunction);
         }
 
-        public Task<TransactionReceipt> MintWithTokenURIRequestAndWaitForReceiptAsync(string to, string tokenURI, CancellationTokenSource cancellationToken = null)
+        public Task<TransactionReceipt> TransferOwnershipRequestAndWaitForReceiptAsync(string newOwner, CancellationTokenSource cancellationToken = null)
         {
-            var mintWithTokenURIFunction = new MintWithTokenURIFunction();
-                mintWithTokenURIFunction.To = to;
-                mintWithTokenURIFunction.TokenURI = tokenURI;
+            var transferOwnershipFunction = new TransferOwnershipFunction();
+                transferOwnershipFunction.NewOwner = newOwner;
             
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(mintWithTokenURIFunction, cancellationToken);
-        }
-
-        public Task<string> SetGovernorRequestAsync(SetGovernorFunction setGovernorFunction)
-        {
-             return ContractHandler.SendRequestAsync(setGovernorFunction);
-        }
-
-        public Task<TransactionReceipt> SetGovernorRequestAndWaitForReceiptAsync(SetGovernorFunction setGovernorFunction, CancellationTokenSource cancellationToken = null)
-        {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(setGovernorFunction, cancellationToken);
-        }
-
-        public Task<string> SetGovernorRequestAsync(string to)
-        {
-            var setGovernorFunction = new SetGovernorFunction();
-                setGovernorFunction.To = to;
-            
-             return ContractHandler.SendRequestAsync(setGovernorFunction);
-        }
-
-        public Task<TransactionReceipt> SetGovernorRequestAndWaitForReceiptAsync(string to, CancellationTokenSource cancellationToken = null)
-        {
-            var setGovernorFunction = new SetGovernorFunction();
-                setGovernorFunction.To = to;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(setGovernorFunction, cancellationToken);
-        }
-
-        public Task<string> GetGovernorQueryAsync(GetGovernorFunction getGovernorFunction, BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<GetGovernorFunction, string>(getGovernorFunction, blockParameter);
-        }
-
-        
-        public Task<string> GetGovernorQueryAsync(BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<GetGovernorFunction, string>(null, blockParameter);
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(transferOwnershipFunction, cancellationToken);
         }
     }
 }

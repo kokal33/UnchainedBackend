@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UnchainedBackend.Data;
 using UnchainedBackend.Models;
+using UnchainedBackend.Models.ReturnModels;
 
 namespace UnchainedBackend.Repos
 {
@@ -11,7 +12,7 @@ namespace UnchainedBackend.Repos
     {
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUser(string publicAddress);
-        Task<IEnumerable<User>> GetArtists();
+        Task<IEnumerable<ArtistsReturn>> GetArtists();
         Task<bool> PostUser(User user);
         Task<bool> DeleteUser(string publicAddress);
         Task<bool> UpdateUser(User user);
@@ -69,9 +70,15 @@ namespace UnchainedBackend.Repos
             return true;
         }
 
-        public async Task<IEnumerable<User>> GetArtists()
+        public async Task<IEnumerable<ArtistsReturn>> GetArtists()
         {
-            return await _context.Users.Where(x=>x.IsArtist).OrderByDescending(x=>x.Verified).ToListAsync();
+            return await _context.Users.Where(x => x.IsArtist).Select(a => new ArtistsReturn()
+            {
+                Name = a.Name,
+                ProfilePic = a.ProfilePic,
+                Verified = a.Verified,
+                PublicAddress = a.PublicAddress
+            }).ToListAsync();
         }
     }
 }

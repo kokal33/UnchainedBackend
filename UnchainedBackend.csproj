@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>866453f0-1b7e-4c2a-b8e9-7d7daf12ccc2</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +30,10 @@
 
   <ItemGroup>
     <Folder Include="Models\ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\Uploads\**\*.*" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
 </Project>

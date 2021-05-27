@@ -1,12 +1,5 @@
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Numerics;
-using Nethereum.Hex.HexTypes;
 using Nethereum.ABI.FunctionEncoding.Attributes;
-using Nethereum.Web3;
-using Nethereum.RPC.Eth.DTOs;
-using Nethereum.Contracts.CQS;
 using Nethereum.Contracts;
 
 namespace UnchainedBackend.UnchainedToken.ContractDefinition
@@ -28,24 +21,6 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual string Name { get; set; }
         [Parameter("string", "symbol", 2)]
         public virtual string Symbol { get; set; }
-        [Parameter("string", "baseURI", 3)]
-        public virtual string BaseURI { get; set; }
-    }
-
-    public partial class DEFAULT_ADMIN_ROLEFunction : DEFAULT_ADMIN_ROLEFunctionBase { }
-
-    [Function("DEFAULT_ADMIN_ROLE", "bytes32")]
-    public class DEFAULT_ADMIN_ROLEFunctionBase : FunctionMessage
-    {
-
-    }
-
-    public partial class GOVERNOR_ROLEFunction : GOVERNOR_ROLEFunctionBase { }
-
-    [Function("GOVERNOR_ROLE", "bytes32")]
-    public class GOVERNOR_ROLEFunctionBase : FunctionMessage
-    {
-
     }
 
     public partial class ApproveFunction : ApproveFunctionBase { }
@@ -76,6 +51,15 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
 
     }
 
+    public partial class CreatorOfFunction : CreatorOfFunctionBase { }
+
+    [Function("creatorOf", "address")]
+    public class CreatorOfFunctionBase : FunctionMessage
+    {
+        [Parameter("uint256", "tokenId", 1)]
+        public virtual BigInteger TokenId { get; set; }
+    }
+
     public partial class GetApprovedFunction : GetApprovedFunctionBase { }
 
     [Function("getApproved", "address")]
@@ -83,57 +67,6 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
     {
         [Parameter("uint256", "tokenId", 1)]
         public virtual BigInteger TokenId { get; set; }
-    }
-
-    public partial class GetRoleAdminFunction : GetRoleAdminFunctionBase { }
-
-    [Function("getRoleAdmin", "bytes32")]
-    public class GetRoleAdminFunctionBase : FunctionMessage
-    {
-        [Parameter("bytes32", "role", 1)]
-        public virtual byte[] Role { get; set; }
-    }
-
-    public partial class GetRoleMemberFunction : GetRoleMemberFunctionBase { }
-
-    [Function("getRoleMember", "address")]
-    public class GetRoleMemberFunctionBase : FunctionMessage
-    {
-        [Parameter("bytes32", "role", 1)]
-        public virtual byte[] Role { get; set; }
-        [Parameter("uint256", "index", 2)]
-        public virtual BigInteger Index { get; set; }
-    }
-
-    public partial class GetRoleMemberCountFunction : GetRoleMemberCountFunctionBase { }
-
-    [Function("getRoleMemberCount", "uint256")]
-    public class GetRoleMemberCountFunctionBase : FunctionMessage
-    {
-        [Parameter("bytes32", "role", 1)]
-        public virtual byte[] Role { get; set; }
-    }
-
-    public partial class GrantRoleFunction : GrantRoleFunctionBase { }
-
-    [Function("grantRole")]
-    public class GrantRoleFunctionBase : FunctionMessage
-    {
-        [Parameter("bytes32", "role", 1)]
-        public virtual byte[] Role { get; set; }
-        [Parameter("address", "account", 2)]
-        public virtual string Account { get; set; }
-    }
-
-    public partial class HasRoleFunction : HasRoleFunctionBase { }
-
-    [Function("hasRole", "bool")]
-    public class HasRoleFunctionBase : FunctionMessage
-    {
-        [Parameter("bytes32", "role", 1)]
-        public virtual byte[] Role { get; set; }
-        [Parameter("address", "account", 2)]
-        public virtual string Account { get; set; }
     }
 
     public partial class IsApprovedForAllFunction : IsApprovedForAllFunctionBase { }
@@ -147,10 +80,29 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual string Operator { get; set; }
     }
 
+    public partial class MintWithTokenURIFunction : MintWithTokenURIFunctionBase { }
+
+    [Function("mintWithTokenURI")]
+    public class MintWithTokenURIFunctionBase : FunctionMessage
+    {
+        [Parameter("address", "to", 1)]
+        public virtual string To { get; set; }
+        [Parameter("string", "tokenURI", 2)]
+        public virtual string TokenURI { get; set; }
+    }
+
     public partial class NameFunction : NameFunctionBase { }
 
     [Function("name", "string")]
     public class NameFunctionBase : FunctionMessage
+    {
+
+    }
+
+    public partial class OwnerFunction : OwnerFunctionBase { }
+
+    [Function("owner", "address")]
+    public class OwnerFunctionBase : FunctionMessage
     {
 
     }
@@ -164,26 +116,12 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual BigInteger TokenId { get; set; }
     }
 
-    public partial class RenounceRoleFunction : RenounceRoleFunctionBase { }
+    public partial class RenounceOwnershipFunction : RenounceOwnershipFunctionBase { }
 
-    [Function("renounceRole")]
-    public class RenounceRoleFunctionBase : FunctionMessage
+    [Function("renounceOwnership")]
+    public class RenounceOwnershipFunctionBase : FunctionMessage
     {
-        [Parameter("bytes32", "role", 1)]
-        public virtual byte[] Role { get; set; }
-        [Parameter("address", "account", 2)]
-        public virtual string Account { get; set; }
-    }
 
-    public partial class RevokeRoleFunction : RevokeRoleFunctionBase { }
-
-    [Function("revokeRole")]
-    public class RevokeRoleFunctionBase : FunctionMessage
-    {
-        [Parameter("bytes32", "role", 1)]
-        public virtual byte[] Role { get; set; }
-        [Parameter("address", "account", 2)]
-        public virtual string Account { get; set; }
     }
 
     public partial class SafeTransferFromFunction : SafeTransferFromFunctionBase { }
@@ -197,8 +135,6 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual string To { get; set; }
         [Parameter("uint256", "tokenId", 3)]
         public virtual BigInteger TokenId { get; set; }
-        [Parameter("bytes", "_data", 4)]
-        public virtual byte[] Data { get; set; }
     }
 
     public partial class SetApprovalForAllFunction : SetApprovalForAllFunctionBase { }
@@ -279,32 +215,13 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual BigInteger TokenId { get; set; }
     }
 
-    public partial class MintWithTokenURIFunction : MintWithTokenURIFunctionBase { }
+    public partial class TransferOwnershipFunction : TransferOwnershipFunctionBase { }
 
-    [Function("mintWithTokenURI", "string")]
-    public class MintWithTokenURIFunctionBase : FunctionMessage
+    [Function("transferOwnership")]
+    public class TransferOwnershipFunctionBase : FunctionMessage
     {
-        [Parameter("address", "to", 1)]
-        public virtual string To { get; set; }
-        [Parameter("string", "tokenURI", 2)]
-        public virtual string TokenURI { get; set; }
-    }
-
-    public partial class SetGovernorFunction : SetGovernorFunctionBase { }
-
-    [Function("setGovernor")]
-    public class SetGovernorFunctionBase : FunctionMessage
-    {
-        [Parameter("address", "to", 1)]
-        public virtual string To { get; set; }
-    }
-
-    public partial class GetGovernorFunction : GetGovernorFunctionBase { }
-
-    [Function("getGovernor", "address")]
-    public class GetGovernorFunctionBase : FunctionMessage
-    {
-
+        [Parameter("address", "newOwner", 1)]
+        public virtual string NewOwner { get; set; }
     }
 
     public partial class ApprovalEventDTO : ApprovalEventDTOBase { }
@@ -333,43 +250,15 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual bool Approved { get; set; }
     }
 
-    public partial class RoleAdminChangedEventDTO : RoleAdminChangedEventDTOBase { }
+    public partial class OwnershipTransferredEventDTO : OwnershipTransferredEventDTOBase { }
 
-    [Event("RoleAdminChanged")]
-    public class RoleAdminChangedEventDTOBase : IEventDTO
+    [Event("OwnershipTransferred")]
+    public class OwnershipTransferredEventDTOBase : IEventDTO
     {
-        [Parameter("bytes32", "role", 1, true )]
-        public virtual byte[] Role { get; set; }
-        [Parameter("bytes32", "previousAdminRole", 2, true )]
-        public virtual byte[] PreviousAdminRole { get; set; }
-        [Parameter("bytes32", "newAdminRole", 3, true )]
-        public virtual byte[] NewAdminRole { get; set; }
-    }
-
-    public partial class RoleGrantedEventDTO : RoleGrantedEventDTOBase { }
-
-    [Event("RoleGranted")]
-    public class RoleGrantedEventDTOBase : IEventDTO
-    {
-        [Parameter("bytes32", "role", 1, true )]
-        public virtual byte[] Role { get; set; }
-        [Parameter("address", "account", 2, true )]
-        public virtual string Account { get; set; }
-        [Parameter("address", "sender", 3, true )]
-        public virtual string Sender { get; set; }
-    }
-
-    public partial class RoleRevokedEventDTO : RoleRevokedEventDTOBase { }
-
-    [Event("RoleRevoked")]
-    public class RoleRevokedEventDTOBase : IEventDTO
-    {
-        [Parameter("bytes32", "role", 1, true )]
-        public virtual byte[] Role { get; set; }
-        [Parameter("address", "account", 2, true )]
-        public virtual string Account { get; set; }
-        [Parameter("address", "sender", 3, true )]
-        public virtual string Sender { get; set; }
+        [Parameter("address", "previousOwner", 1, true )]
+        public virtual string PreviousOwner { get; set; }
+        [Parameter("address", "newOwner", 2, true )]
+        public virtual string NewOwner { get; set; }
     }
 
     public partial class TransferEventDTO : TransferEventDTOBase { }
@@ -383,24 +272,6 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual string To { get; set; }
         [Parameter("uint256", "tokenId", 3, true )]
         public virtual BigInteger TokenId { get; set; }
-    }
-
-    public partial class DEFAULT_ADMIN_ROLEOutputDTO : DEFAULT_ADMIN_ROLEOutputDTOBase { }
-
-    [FunctionOutput]
-    public class DEFAULT_ADMIN_ROLEOutputDTOBase : IFunctionOutputDTO 
-    {
-        [Parameter("bytes32", "", 1)]
-        public virtual byte[] ReturnValue1 { get; set; }
-    }
-
-    public partial class GOVERNOR_ROLEOutputDTO : GOVERNOR_ROLEOutputDTOBase { }
-
-    [FunctionOutput]
-    public class GOVERNOR_ROLEOutputDTOBase : IFunctionOutputDTO 
-    {
-        [Parameter("bytes32", "", 1)]
-        public virtual byte[] ReturnValue1 { get; set; }
     }
 
 
@@ -423,6 +294,15 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual string ReturnValue1 { get; set; }
     }
 
+    public partial class CreatorOfOutputDTO : CreatorOfOutputDTOBase { }
+
+    [FunctionOutput]
+    public class CreatorOfOutputDTOBase : IFunctionOutputDTO 
+    {
+        [Parameter("address", "", 1)]
+        public virtual string ReturnValue1 { get; set; }
+    }
+
     public partial class GetApprovedOutputDTO : GetApprovedOutputDTOBase { }
 
     [FunctionOutput]
@@ -430,44 +310,6 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
     {
         [Parameter("address", "", 1)]
         public virtual string ReturnValue1 { get; set; }
-    }
-
-    public partial class GetRoleAdminOutputDTO : GetRoleAdminOutputDTOBase { }
-
-    [FunctionOutput]
-    public class GetRoleAdminOutputDTOBase : IFunctionOutputDTO 
-    {
-        [Parameter("bytes32", "", 1)]
-        public virtual byte[] ReturnValue1 { get; set; }
-    }
-
-    public partial class GetRoleMemberOutputDTO : GetRoleMemberOutputDTOBase { }
-
-    [FunctionOutput]
-    public class GetRoleMemberOutputDTOBase : IFunctionOutputDTO 
-    {
-        [Parameter("address", "", 1)]
-        public virtual string ReturnValue1 { get; set; }
-    }
-
-    public partial class GetRoleMemberCountOutputDTO : GetRoleMemberCountOutputDTOBase { }
-
-    [FunctionOutput]
-    public class GetRoleMemberCountOutputDTOBase : IFunctionOutputDTO 
-    {
-        [Parameter("uint256", "", 1)]
-        public virtual BigInteger ReturnValue1 { get; set; }
-    }
-
-
-
-    public partial class HasRoleOutputDTO : HasRoleOutputDTOBase { }
-
-    [FunctionOutput]
-    public class HasRoleOutputDTOBase : IFunctionOutputDTO 
-    {
-        [Parameter("bool", "", 1)]
-        public virtual bool ReturnValue1 { get; set; }
     }
 
     public partial class IsApprovedForAllOutputDTO : IsApprovedForAllOutputDTOBase { }
@@ -479,12 +321,23 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         public virtual bool ReturnValue1 { get; set; }
     }
 
+
+
     public partial class NameOutputDTO : NameOutputDTOBase { }
 
     [FunctionOutput]
     public class NameOutputDTOBase : IFunctionOutputDTO 
     {
         [Parameter("string", "", 1)]
+        public virtual string ReturnValue1 { get; set; }
+    }
+
+    public partial class OwnerOutputDTO : OwnerOutputDTOBase { }
+
+    [FunctionOutput]
+    public class OwnerOutputDTOBase : IFunctionOutputDTO 
+    {
+        [Parameter("address", "", 1)]
         public virtual string ReturnValue1 { get; set; }
     }
 
@@ -496,8 +349,6 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
         [Parameter("address", "", 1)]
         public virtual string ReturnValue1 { get; set; }
     }
-
-
 
 
 
@@ -564,15 +415,4 @@ namespace UnchainedBackend.UnchainedToken.ContractDefinition
 
 
 
-
-
-
-    public partial class GetGovernorOutputDTO : GetGovernorOutputDTOBase { }
-
-    [FunctionOutput]
-    public class GetGovernorOutputDTOBase : IFunctionOutputDTO 
-    {
-        [Parameter("address", "", 1)]
-        public virtual string ReturnValue1 { get; set; }
-    }
 }

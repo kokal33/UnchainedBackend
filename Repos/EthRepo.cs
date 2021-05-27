@@ -35,14 +35,12 @@ namespace UnchainedBackend.Repos
         }
 
         public async Task<int> GetBalanceOfAddress(GetAccountBalanceModel model) {
-            var privateKey = "3f95ca38499439b8adee49d194522154c48bdfe1a2529c4865b38b54970aef74";
             var contractAddress = _configuration["Ethereum:ContractAddress"];
-            var account = new Account(privateKey);
-            var web3 = new Web3(account, "https://data-seed-prebsc-1-s3.binance.org:8545");
+            var web3 = _ethHelper.GetWeb3(null);
 
             var balanceOfFunctionMessage = new BalanceOfFunction()
             {
-                Owner = account.Address
+                Owner = model.Address
             };
 
             var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOfFunction>();
@@ -52,30 +50,24 @@ namespace UnchainedBackend.Repos
 
         public async Task<string> DeployAndCall(DeployContractModel model)
         {
-            var privateKey = "3f95ca38499439b8adee49d194522154c48bdfe1a2529c4865b38b54970aef74";
-            var account = new Account(privateKey);
-            var web3 = new Web3(account, "https://data-seed-prebsc-1-s3.binance.org:8545");
+            var web3 = _ethHelper.GetWeb3(null);
 
             var deployment = new UnchainedTokenDeployment
             {
                 Name = model.Name,
-                Symbol = model.Symbol,
-                BaseURI = model.BaseURI
+                Symbol = model.Symbol
             };
             var service = await UnchainedTokenService.DeployContractAndGetServiceAsync(web3, deployment);
             return service.ContractHandler.ContractAddress;
         }
 
         public async Task<TransactionReceipt> MintWithTokenURI(MintWithTokenURIModel model) {
-            var privateKey = _configuration["Ethereum:PrivateKey"];
             var contractAddress = _configuration["Ethereum:ContractAddress"];
+            var web3 = _ethHelper.GetWeb3(null);
 
-            var account = new Account(privateKey);
-            var web3 = new Web3(account, "https://data-seed-prebsc-1-s3.binance.org:8545");
-            
             var tokenURIFunction = new MintWithTokenURIFunction()
             {
-                To = model.To ?? account.Address,
+                To = model.To,
                 TokenURI = model.Metadata
             };
 

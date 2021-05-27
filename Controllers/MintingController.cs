@@ -81,7 +81,7 @@ namespace UnchainedBackend.Controllers
             var uploadedMetadata = await _storageRepo.UploadText(metadata);
 
             // 4. MINT THE TOKEN WITH THE GIVEN LINK AND METADATA
-            MintWithTokenURIModel forMinting = new() { Metadata = uploadedMetadata, To = model.To };
+            MintWithTokenURIModel forMinting = new() { Metadata = uploadedMetadata, To = track.OwnerOfPublicAddress };
             var mint = await _ethRepo.MintWithTokenURI(forMinting);
             if (mint == null) return UnprocessableEntity();
 
