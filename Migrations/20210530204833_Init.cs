@@ -61,11 +61,15 @@ namespace UnchainedBackend.Migrations
                     Description = table.Column<string>(type: "text", nullable: true),
                     ImageLocation = table.Column<string>(type: "text", nullable: true),
                     FileLocation = table.Column<string>(type: "text", nullable: true),
+                    IsMinted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsAuctioned = table.Column<bool>(type: "boolean", nullable: false),
+                    IsListed = table.Column<bool>(type: "boolean", nullable: false),
+                    IsSold = table.Column<bool>(type: "boolean", nullable: false),
+                    TokenId = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    TypeOfListing = table.Column<int>(type: "integer", nullable: false),
                     OwnerOfPublicAddress = table.Column<string>(type: "text", nullable: true),
-                    isMinted = table.Column<bool>(type: "boolean", nullable: false),
-                    isAuctioned = table.Column<bool>(type: "boolean", nullable: false),
-                    isListed = table.Column<bool>(type: "boolean", nullable: false),
-                    isSold = table.Column<bool>(type: "boolean", nullable: false),
+                    AuctionId = table.Column<string>(type: "text", nullable: true),
                     Timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
@@ -80,31 +84,69 @@ namespace UnchainedBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bids",
+                name: "Auctions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    PublicAddress = table.Column<string>(type: "text", nullable: true),
-                    Signature = table.Column<string>(type: "text", nullable: true),
-                    AmountInBsc = table.Column<int>(type: "integer", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Started = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Ending = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsEnded = table.Column<bool>(type: "boolean", nullable: false),
                     TrackId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bids", x => x.Id);
+                    table.PrimaryKey("PK_Auctions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bids_Tracks_TrackId",
+                        name: "FK_Auctions_Tracks_TrackId",
                         column: x => x.TrackId,
                         principalTable: "Tracks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Bids",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    OwnerOfPublicAddress = table.Column<string>(type: "text", nullable: true),
+                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    AuctionId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bids", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bids_Auctions_AuctionId",
+                        column: x => x.AuctionId,
+                        principalTable: "Auctions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Bids_Users_OwnerOfPublicAddress",
+                        column: x => x.OwnerOfPublicAddress,
+                        principalTable: "Users",
+                        principalColumn: "PublicAddress",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Bids_TrackId",
+                name: "IX_Auctions_TrackId",
+                table: "Auctions",
+                column: "TrackId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bids_AuctionId",
                 table: "Bids",
-                column: "TrackId");
+                column: "AuctionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bids_OwnerOfPublicAddress",
+                table: "Bids",
+                column: "OwnerOfPublicAddress");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PendingArtists_ArtistPublicAddress",
@@ -124,6 +166,9 @@ namespace UnchainedBackend.Migrations
 
             migrationBuilder.DropTable(
                 name: "PendingArtists");
+
+            migrationBuilder.DropTable(
+                name: "Auctions");
 
             migrationBuilder.DropTable(
                 name: "Tracks");

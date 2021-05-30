@@ -10,6 +10,7 @@ using UnchainedBackend.Models;
 using UnchainedBackend.Models.PartialModels;
 using UnchainedBackend.Models.ReturnModels;
 using UnchainedBackend.Repos;
+using UnchainedBackend.UnchainedToken.ContractDefinition;
 
 namespace UnchainedBackend.Controllers
 {
@@ -21,7 +22,7 @@ namespace UnchainedBackend.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly ITracksRepo _tracksRepo;
 
-        public MintingController(ILogger<MintingController> logger, IEthRepo ethRepo, IStorageRepo storageRepo, 
+        public MintingController(ILogger<MintingController> logger, IEthRepo ethRepo, IStorageRepo storageRepo,
                                  IWebHostEnvironment env, ITracksRepo tracksRepo)
         {
             _logger = logger;
@@ -87,10 +88,16 @@ namespace UnchainedBackend.Controllers
 
             // Set track as minted in DB
             await _tracksRepo.SetIsMinted(track, true);
+            // Get total token supply and precalculate tokenId
+            var totalSupply = await _ethRepo.GetContractSupply();
+            var tokenId = totalSupply - 1;
+            await _tracksRepo.SetTokenId(track, tokenId);
+
             MintReturn result = new()
             {
                 TransactionHash = mint.TransactionHash,
-                Metadata = metadataModel
+                Metadata = metadataModel,
+                TokenId = tokenId
             };
             return Ok(result);
         }
@@ -141,6 +148,10 @@ namespace UnchainedBackend.Controllers
             auctionTask.StartAsync(new CancellationToken());
             return Ok();
         }
+        //[HttpPost]
+        //public IActionResult Approve([FromBody] ApproveModel model)
+        //{
 
+        //}
     }
 }

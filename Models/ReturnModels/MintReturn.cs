@@ -4,5 +4,6 @@
     {
         public string TransactionHash { get; set; }
         public MetadataModel Metadata { get; set; }
+        public int TokenId { get; set; }
     }
 }

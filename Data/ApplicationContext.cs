@@ -12,6 +12,7 @@ namespace UnchainedBackend.Data
         public DbSet<User> Users { get; set; }
         public DbSet<PendingArtist> PendingArtists { get; set; }
         public DbSet<Bid> Bids { get; set; }
+        public DbSet<Auction> Auctions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -19,8 +20,6 @@ namespace UnchainedBackend.Data
 
             builder.Entity<User>().Property(x => x.PublicAddress)
                 .ValueGeneratedOnAdd();
-            builder.Entity<Bid>().Property(x => x.PublicAddress)
-               .ValueGeneratedOnAdd();
         }
 
         public override int SaveChanges()

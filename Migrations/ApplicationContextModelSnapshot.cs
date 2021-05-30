@@ -19,22 +19,20 @@ namespace UnchainedBackend.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("UnchainedBackend.Models.Bid", b =>
+            modelBuilder.Entity("UnchainedBackend.Models.Auction", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("AmountInBsc")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("PublicAddress")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Signature")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("Ending")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<bool>("IsEnded")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("Started")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("TrackId")
@@ -42,7 +40,34 @@ namespace UnchainedBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TrackId");
+                    b.HasIndex("TrackId")
+                        .IsUnique();
+
+                    b.ToTable("Auctions");
+                });
+
+            modelBuilder.Entity("UnchainedBackend.Models.Bid", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("AuctionId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OwnerOfPublicAddress")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuctionId");
+
+                    b.HasIndex("OwnerOfPublicAddress");
 
                     b.ToTable("Bids");
                 });
@@ -71,6 +96,9 @@ namespace UnchainedBackend.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("AuctionId")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -80,8 +108,23 @@ namespace UnchainedBackend.Migrations
                     b.Property<string>("ImageLocation")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsAuctioned")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsListed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsMinted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSold")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("OwnerOfPublicAddress")
                         .HasColumnType("text");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp without time zone");
@@ -89,17 +132,11 @@ namespace UnchainedBackend.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
-                    b.Property<bool>("isAuctioned")
-                        .HasColumnType("boolean");
+                    b.Property<int>("TokenId")
+                        .HasColumnType("integer");
 
-                    b.Property<bool>("isListed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("isMinted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("isSold")
-                        .HasColumnType("boolean");
+                    b.Property<int>("TypeOfListing")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -158,15 +195,28 @@ namespace UnchainedBackend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("UnchainedBackend.Models.Bid", b =>
+            modelBuilder.Entity("UnchainedBackend.Models.Auction", b =>
                 {
                     b.HasOne("UnchainedBackend.Models.Track", "Track")
-                        .WithMany("Bids")
-                        .HasForeignKey("TrackId")
+                        .WithOne("Auction")
+                        .HasForeignKey("UnchainedBackend.Models.Auction", "TrackId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Track");
+                });
+
+            modelBuilder.Entity("UnchainedBackend.Models.Bid", b =>
+                {
+                    b.HasOne("UnchainedBackend.Models.Auction", null)
+                        .WithMany("Bids")
+                        .HasForeignKey("AuctionId");
+
+                    b.HasOne("UnchainedBackend.Models.User", "OwnerOf")
+                        .WithMany()
+                        .HasForeignKey("OwnerOfPublicAddress");
+
+                    b.Navigation("OwnerOf");
                 });
 
             modelBuilder.Entity("UnchainedBackend.Models.PendingArtist", b =>
@@ -181,20 +231,20 @@ namespace UnchainedBackend.Migrations
             modelBuilder.Entity("UnchainedBackend.Models.Track", b =>
                 {
                     b.HasOne("UnchainedBackend.Models.User", "OwnerOf")
-                        .WithMany("Tracks")
+                        .WithMany()
                         .HasForeignKey("OwnerOfPublicAddress");
 
                     b.Navigation("OwnerOf");
                 });
 
-            modelBuilder.Entity("UnchainedBackend.Models.Track", b =>
+            modelBuilder.Entity("UnchainedBackend.Models.Auction", b =>
                 {
                     b.Navigation("Bids");
                 });
 
-            modelBuilder.Entity("UnchainedBackend.Models.User", b =>
+            modelBuilder.Entity("UnchainedBackend.Models.Track", b =>
                 {
-                    b.Navigation("Tracks");
+                    b.Navigation("Auction");
                 });
 #pragma warning restore 612, 618
         }

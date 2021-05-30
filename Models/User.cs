@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UnchainedBackend.Models
 {
@@ -13,7 +12,6 @@ namespace UnchainedBackend.Models
         public string ProfilePic { get; set; }
         public bool IsArtist { get; set; } = false;
         public bool Verified { get; set; } = false;
-        public virtual ICollection<Track> Tracks { get; set; }
         public string Twitter { get; set; }
         public string Facebook { get; set; }
         public string Instagram { get; set; }

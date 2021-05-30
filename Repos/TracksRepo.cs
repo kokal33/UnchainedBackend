@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,12 +9,13 @@ using UnchainedBackend.Data;
 using UnchainedBackend.Helpers;
 using UnchainedBackend.Models;
 using UnchainedBackend.Models.PartialModels;
+using UnchainedBackend.Models.ReturnModels;
 
 namespace UnchainedBackend.Repos
 {
     public interface ITracksRepo
     {
-        Task<IEnumerable<Track>> GetTracks();
+        Task<IEnumerable<TrackReturn>> GetTracks();
         Task<Track> GetTrack(int id);
         Task<int> PostTrack(TrackModel track);
         Task<bool> DeleteTrack(int id);
@@ -21,6 +23,7 @@ namespace UnchainedBackend.Repos
         Task<bool> SetIsListed(int trackId, bool isListed);
         Task<bool> SetIsSold(int trackId, bool isSold);
         Task<bool> SetIsMinted(Track track, bool isMinted);
+        Task<bool> SetTokenId(Track track, int tokenId);
         Task<bool> SetIsAuctioned(int trackId, bool isAuctioned);
 
 
@@ -37,9 +40,25 @@ namespace UnchainedBackend.Repos
             _context = context;
         }
 
-        public async Task<IEnumerable<Track>> GetTracks()
+        public async Task<IEnumerable<TrackReturn>> GetTracks()
         {
-            return await _context.Tracks.ToListAsync();
+            return await _context.Tracks.Where(w => w.IsSold == false && w.IsMinted==true).Include(t => t.Auction).Include(t=>t.OwnerOf)
+                .Select(x => new TrackReturn
+            {
+                AuctionEnding = x.Auction != null ? x.Auction.Ending : null,
+                AuctionId = x.AuctionId,
+                IsAuctioned = x.IsAuctioned,
+                IsListed = x.IsListed,
+                Id = x.Id,
+                Description = x.Description,
+                FileLocation = x.FileLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1],
+                ImageLocation = x.ImageLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1],
+                OwnerOfProfilePic = x.OwnerOf.ProfilePic,
+                OwnerOfPublicAddress = x.OwnerOfPublicAddress,
+                Title = x.Title,
+                TokenId = x.TokenId,
+                Price = x.Price
+            }).ToListAsync();
         }
 
         public async Task<Track> GetTrack(int id)
@@ -95,30 +114,30 @@ namespace UnchainedBackend.Repos
                 track.Description = description;
             if (isMinted != null) {
                 if (isMinted == "true")
-                    track.isMinted = true;
+                    track.IsMinted = true;
                 if (isMinted == "false")
-                    track.isMinted = false;
+                    track.IsMinted = false;
             }
             if (isAuctioned != null)
             {
                 if (isAuctioned == "true")
-                    track.isAuctioned = true;
+                    track.IsAuctioned = true;
                 if (isAuctioned == "false")
-                    track.isAuctioned = false;
+                    track.IsAuctioned = false;
             }
             if (isListed != null)
             {
                 if (isListed == "true")
-                    track.isListed = true;
+                    track.IsListed = true;
                 if (isListed == "false")
-                    track.isListed = false;
+                    track.IsListed = false;
             }
             if (isSold != null)
             {
                 if (isSold == "true")
-                    track.isSold = true;
+                    track.IsSold = true;
                 if (isSold == "false")
-                    track.isSold = false;
+                    track.IsSold = false;
             }
             _context.Entry(track).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -127,32 +146,39 @@ namespace UnchainedBackend.Repos
 
         public async Task<bool> SetIsListed(int trackId, bool isListed) 
         {
-            Track track = new Track { Id = trackId, isListed = isListed };
-            _context.Entry(track).Property(x => x.isListed).IsModified = true;
+            Track track = new Track { Id = trackId, IsListed = isListed };
+            _context.Entry(track).Property(x => x.IsListed).IsModified = true;
             await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> SetIsMinted(Track track, bool isMinted)
         {
-            track.isMinted = true;
-            _context.Entry(track).Property(x => x.isMinted).IsModified = true;
+            track.IsMinted = true;
+            _context.Entry(track).Property(x => x.IsMinted).IsModified = true;
             await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> SetIsSold(int trackId, bool isSold)
         {
-            Track track = new Track { Id = trackId, isSold = isSold };
-            _context.Entry(track).Property(x => x.isSold).IsModified = true;
+            Track track = new Track { Id = trackId, IsSold = isSold };
+            _context.Entry(track).Property(x => x.IsSold).IsModified = true;
             await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> SetIsAuctioned(int trackId, bool isAuctioned)
         {
-            Track track = new Track { Id = trackId, isAuctioned = isAuctioned };
-            _context.Entry(track).Property(x => x.isAuctioned).IsModified = true;
+            Track track = new Track { Id = trackId, IsAuctioned = isAuctioned };
+            _context.Entry(track).Property(x => x.IsAuctioned).IsModified = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> SetTokenId(Track track, int tokenId)
+        {
+            track.TokenId = tokenId;
+            _context.Entry(track).Property(x => x.TokenId).IsModified = true;
             await _context.SaveChangesAsync();
             return true;
         }

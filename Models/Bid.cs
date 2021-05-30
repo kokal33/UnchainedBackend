@@ -7,11 +7,9 @@ namespace UnchainedBackend.Models
     {
         [Key]
         public string Id { get; set; }
-        public string PublicAddress { get; set; }
-        public string Signature { get; set; }
-        public int AmountInBsc { get; set; }
+        public virtual User OwnerOf { get; set; }
+        public string OwnerOfPublicAddress { get; set; }
+        public int Amount { get; set; }
         public DateTime Timestamp { get; set; }
-        public virtual Track Track { get; set; }
-        public int TrackId { get; set; }
     }
 }

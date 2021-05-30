@@ -36,7 +36,7 @@ namespace UnchainedBackend.Repos
 
         public async Task<int> GetBalanceOfAddress(GetAccountBalanceModel model) {
             var contractAddress = _configuration["Ethereum:ContractAddress"];
-            var web3 = _ethHelper.GetWeb3(null);
+            var web3 = _ethHelper.GetWeb3();
 
             var balanceOfFunctionMessage = new BalanceOfFunction()
             {
@@ -50,7 +50,7 @@ namespace UnchainedBackend.Repos
 
         public async Task<string> DeployAndCall(DeployContractModel model)
         {
-            var web3 = _ethHelper.GetWeb3(null);
+            var web3 = _ethHelper.GetWeb3();
 
             var deployment = new UnchainedTokenDeployment
             {
@@ -63,7 +63,7 @@ namespace UnchainedBackend.Repos
 
         public async Task<TransactionReceipt> MintWithTokenURI(MintWithTokenURIModel model) {
             var contractAddress = _configuration["Ethereum:ContractAddress"];
-            var web3 = _ethHelper.GetWeb3(null);
+            var web3 = _ethHelper.GetWeb3();
 
             var tokenURIFunction = new MintWithTokenURIFunction()
             {
@@ -78,23 +78,21 @@ namespace UnchainedBackend.Repos
 
         public async Task<int> GetContractSupply()
         {
-            var privateAddress = _configuration["Ethereum:PrivateAddress"];
             var contractAddress = _configuration["Ethereum:ContractAddress"];
-            var web3 = _ethHelper.GetWeb3(privateAddress);
+            var web3 = _ethHelper.GetWeb3();
 
             var totalSupplyFunction = new TotalSupplyFunction();
             var mintHandler = web3.Eth.GetContractQueryHandler<TotalSupplyFunction>();
             var totalSupply = await mintHandler.QueryAsync<int>(contractAddress, totalSupplyFunction);
-
+            // TODO: total supply is returning 0
             return totalSupply;
         }
 
         public async Task<string> GetTokenURI(GetTokenURIModel model)
         {
-            var privateAddress = _configuration["Ethereum:PrivateAddress"];
             var contractAddress = _configuration["Ethereum:ContractAddress"];
 
-            var web3 = _ethHelper.GetWeb3(privateAddress);
+            var web3 = _ethHelper.GetWeb3();
             var tokenURIFunction = new TokenURIFunction() {
                 TokenId = model.TokenId
             };
@@ -109,7 +107,7 @@ namespace UnchainedBackend.Repos
             var privateAddress = _configuration["Ethereum:PrivateAddress"];
             var contractAddress = _configuration["Ethereum:ContractAddress"];
 
-            var web3 = _ethHelper.GetWeb3(null);
+            var web3 = _ethHelper.GetWeb3();
             var transferFunction = new TransferFromFunction()
             {
                 From = privateAddress,
@@ -126,7 +124,7 @@ namespace UnchainedBackend.Repos
         {
             var contractAddress = _configuration["Ethereum:ContractAddress"];
 
-            var web3 = _ethHelper.GetWeb3(null);
+            var web3 = _ethHelper.GetWeb3();
             var ownerOfFunction = new OwnerOfFunction()
             {
                 TokenId = model.TokenId

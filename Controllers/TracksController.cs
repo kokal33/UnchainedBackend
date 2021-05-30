@@ -16,7 +16,7 @@ namespace UnchainedBackend.Controllers
             _usersRepo = usersRepo;
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetTracks()
         {
             var tracks = await _tracksRepo.GetTracks();

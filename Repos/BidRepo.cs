@@ -49,16 +49,5 @@ namespace UnchainedBackend.Repos
             await _context.SaveChangesAsync();
             return true;
         }
-
-        public async Task<bool> UpdateUserToBid(Bid model)
-        {
-            var user = _context.Users.Find(model.PublicAddress);
-            if (user == null)
-                return false;
-
-            _context.Update(user);
-            await _context.SaveChangesAsync();
-            return true;
-        }
     }
 }
