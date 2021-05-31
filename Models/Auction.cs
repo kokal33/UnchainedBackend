@@ -14,5 +14,6 @@ namespace UnchainedBackend.Models
         public IEnumerable<Bid> Bids { get; set; }
         public virtual Track Track { get; set; }
         public virtual int TrackId { get; set; }
+        public double Price { get; set; }
     }
 }

@@ -32,6 +32,9 @@ namespace UnchainedBackend.Migrations
                     b.Property<bool>("IsEnded")
                         .HasColumnType("boolean");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
                     b.Property<DateTime>("Started")
                         .HasColumnType("timestamp without time zone");
 

@@ -57,13 +57,13 @@ namespace UnchainedBackend.Repos
                 OwnerOfPublicAddress = x.OwnerOfPublicAddress,
                 Title = x.Title,
                 TokenId = x.TokenId,
-                Price = x.Price
+                Price = x.Auction != null ? x.Auction.Price : null
             }).ToListAsync();
         }
 
         public async Task<Track> GetTrack(int id)
         {
-            var track = await _context.Tracks.Include(x => x.OwnerOf).FirstOrDefaultAsync(t => t.Id == id);
+            var track = await _context.Tracks.Include(x => x.OwnerOf).Include(x=>x.Auction).FirstOrDefaultAsync(t => t.Id == id);
             return track;
         }       
 
@@ -76,6 +76,7 @@ namespace UnchainedBackend.Repos
             using (Stream fileStream = new FileStream(filePath, FileMode.Create))
                 await model.File.CopyToAsync(fileStream);
             // Write the track image to store
+            //TODO: check here for 
             string trackImageContent = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", model.OwnerOfPublicAddress, "TrackImages");
             string imagePath = Path.Combine(trackImageContent, model.File.FileName);
             (new FileInfo(imagePath)).Directory.Create();

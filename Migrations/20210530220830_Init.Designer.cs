@@ -10,7 +10,7 @@ using UnchainedBackend.Data;
 namespace UnchainedBackend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210530204833_Init")]
+    [Migration("20210530220830_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,9 @@ namespace UnchainedBackend.Migrations
 
                     b.Property<bool>("IsEnded")
                         .HasColumnType("boolean");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("Started")
                         .HasColumnType("timestamp without time zone");

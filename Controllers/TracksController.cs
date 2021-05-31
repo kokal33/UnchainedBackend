@@ -24,9 +24,9 @@ namespace UnchainedBackend.Controllers
             return Ok(tracks);
         }
         [HttpPost]
-        public async Task<IActionResult> GetTrack([FromBody] int Id)
+        public async Task<IActionResult> GetTrack([FromBody] IdModel model)
         {
-            var track = await _tracksRepo.GetTrack(Id);
+            var track = await _tracksRepo.GetTrack(model.Id);
             if (track == null) return NoContent();
             return Ok(track);
         }

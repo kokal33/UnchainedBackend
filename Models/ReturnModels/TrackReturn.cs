@@ -17,7 +17,7 @@ namespace UnchainedBackend.Models.ReturnModels
         public string OwnerOfPublicAddress { get; set; }
         public DateTime? AuctionEnding { get; set; }
         public string AuctionId { get; set; }
-        public double Price { get; set; }
+        public double? Price { get; set; }
         public DateTime Ending { get; set; }
     }
 }

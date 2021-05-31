@@ -92,7 +92,8 @@ namespace UnchainedBackend.Migrations
                     Started = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Ending = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IsEnded = table.Column<bool>(type: "boolean", nullable: false),
-                    TrackId = table.Column<int>(type: "integer", nullable: false)
+                    TrackId = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
