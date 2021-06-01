@@ -56,7 +56,7 @@ namespace UnchainedBackend.Controllers
             var baseUrl = HttpContext.Request.Host.Value;
             string magicUrl = null;
 
-            var track = await _tracksRepo.GetTrack(model.TrackId);
+            var track = await _tracksRepo.GetTrackForMinting(model.TrackId);
             // 1. UPLOAD FILES and get files link on IPFS
             var uploadedFileLink = await _storageRepo.UploadFile(track.FileLocation);
             var uploadedCover = await _storageRepo.UploadFile(track.ImageLocation);

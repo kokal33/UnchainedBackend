@@ -10,7 +10,7 @@ using UnchainedBackend.Data;
 namespace UnchainedBackend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210530220830_Init")]
+    [Migration("20210601222612_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,6 +77,30 @@ namespace UnchainedBackend.Migrations
                     b.ToTable("Bids");
                 });
 
+            modelBuilder.Entity("UnchainedBackend.Models.Listing", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("TrackId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrackId")
+                        .IsUnique();
+
+                    b.ToTable("Listings");
+                });
+
             modelBuilder.Entity("UnchainedBackend.Models.PendingArtist", b =>
                 {
                     b.Property<int>("Id")
@@ -124,6 +148,9 @@ namespace UnchainedBackend.Migrations
 
                     b.Property<bool>("IsSold")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("ListingId")
+                        .HasColumnType("text");
 
                     b.Property<string>("OwnerOfPublicAddress")
                         .HasColumnType("text");
@@ -224,6 +251,17 @@ namespace UnchainedBackend.Migrations
                     b.Navigation("OwnerOf");
                 });
 
+            modelBuilder.Entity("UnchainedBackend.Models.Listing", b =>
+                {
+                    b.HasOne("UnchainedBackend.Models.Track", "Track")
+                        .WithOne("Listing")
+                        .HasForeignKey("UnchainedBackend.Models.Listing", "TrackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Track");
+                });
+
             modelBuilder.Entity("UnchainedBackend.Models.PendingArtist", b =>
                 {
                     b.HasOne("UnchainedBackend.Models.User", "Artist")
@@ -250,6 +288,8 @@ namespace UnchainedBackend.Migrations
             modelBuilder.Entity("UnchainedBackend.Models.Track", b =>
                 {
                     b.Navigation("Auction");
+
+                    b.Navigation("Listing");
                 });
 #pragma warning restore 612, 618
         }

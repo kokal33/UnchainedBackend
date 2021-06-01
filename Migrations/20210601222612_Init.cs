@@ -70,6 +70,7 @@ namespace UnchainedBackend.Migrations
                     TypeOfListing = table.Column<int>(type: "integer", nullable: false),
                     OwnerOfPublicAddress = table.Column<string>(type: "text", nullable: true),
                     AuctionId = table.Column<string>(type: "text", nullable: true),
+                    ListingId = table.Column<string>(type: "text", nullable: true),
                     Timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
@@ -100,6 +101,27 @@ namespace UnchainedBackend.Migrations
                     table.PrimaryKey("PK_Auctions", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Auctions_Tracks_TrackId",
+                        column: x => x.TrackId,
+                        principalTable: "Tracks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Listings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    TrackId = table.Column<int>(type: "integer", nullable: false),
+                    Created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Listings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Listings_Tracks_TrackId",
                         column: x => x.TrackId,
                         principalTable: "Tracks",
                         principalColumn: "Id",
@@ -150,6 +172,12 @@ namespace UnchainedBackend.Migrations
                 column: "OwnerOfPublicAddress");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Listings_TrackId",
+                table: "Listings",
+                column: "TrackId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PendingArtists_ArtistPublicAddress",
                 table: "PendingArtists",
                 column: "ArtistPublicAddress");
@@ -164,6 +192,9 @@ namespace UnchainedBackend.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Bids");
+
+            migrationBuilder.DropTable(
+                name: "Listings");
 
             migrationBuilder.DropTable(
                 name: "PendingArtists");

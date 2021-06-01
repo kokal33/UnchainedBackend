@@ -13,6 +13,7 @@ namespace UnchainedBackend.Data
         public DbSet<PendingArtist> PendingArtists { get; set; }
         public DbSet<Bid> Bids { get; set; }
         public DbSet<Auction> Auctions { get; set; }
+        public DbSet<Listing> Listings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

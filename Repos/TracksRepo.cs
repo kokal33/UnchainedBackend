@@ -17,6 +17,7 @@ namespace UnchainedBackend.Repos
     {
         Task<IEnumerable<TrackReturn>> GetTracks();
         Task<Track> GetTrack(int id);
+        Task<Track> GetTrackForMinting(int id);
         Task<int> PostTrack(TrackModel track);
         Task<bool> DeleteTrack(int id);
         Task<bool> UpdateTrack(int trackId, string title, string description, string isMinted, string isAuctioned, string isListed, string isSold);
@@ -64,9 +65,16 @@ namespace UnchainedBackend.Repos
         public async Task<Track> GetTrack(int id)
         {
             var track = await _context.Tracks.Include(x => x.OwnerOf).Include(x=>x.Auction).FirstOrDefaultAsync(t => t.Id == id);
+            track.FileLocation = track.FileLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1];
+            track.ImageLocation = track.ImageLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1];
             return track;
-        }       
-
+        }
+        public async Task<Track> GetTrackForMinting(int id)
+        {
+            var track = await _context.Tracks.Include(x => x.OwnerOf).Include(x => x.Auction).FirstOrDefaultAsync(t => t.Id == id);
+            return track;
+        }
+       
         public async Task<int> PostTrack(TrackModel model)
         {
             // Write the track to storage

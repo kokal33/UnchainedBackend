@@ -20,6 +20,8 @@ namespace UnchainedBackend.Models
         public string OwnerOfPublicAddress { get; set; }
         public virtual Auction Auction { get; set; }
         public string AuctionId { get; set; }
+        public virtual Listing Listing { get; set; }
+        public string ListingId { get; set; }
         public DateTime Timestamp { get; set; }
     }
 }
