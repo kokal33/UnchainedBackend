@@ -16,7 +16,7 @@ namespace UnchainedBackend.Repos
         Task<bool> PostUser(User user);
         Task<bool> DeleteUser(string publicAddress);
         Task<bool> UpdateUser(User user);
-
+        Task<bool> UnchainUser(string publicAddress);
     }
     public class UsersRepo : IUsersRepo
     {
@@ -59,6 +59,7 @@ namespace UnchainedBackend.Repos
             var existingUser = await _context.Users.FirstOrDefaultAsync(x=>x.PublicAddress == user.PublicAddress);
             // Persist the signature because we dont get it on update
             user.Signature = existingUser.Signature;
+            user.Verified = existingUser.Verified;
             if (existingUser.IsArtist == false && user.IsArtist == true)
             {
                 PendingArtist pendingArtist = new() { ArtistPublicAddress = user.PublicAddress };
@@ -79,6 +80,18 @@ namespace UnchainedBackend.Repos
                 Verified = a.Verified,
                 PublicAddress = a.PublicAddress
             }).ToListAsync();
+        }
+
+        public async Task<bool> UnchainUser(string publicAddress)
+        {
+            var user = new User { PublicAddress = publicAddress, Verified = true };
+            _context.Entry(user).Property(x => x.Verified).IsModified = true;
+
+            var pendingArtist = await _context.PendingArtists.Where(x => x.ArtistPublicAddress == publicAddress)
+                .FirstOrDefaultAsync();
+            _context.PendingArtists.Remove(pendingArtist);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

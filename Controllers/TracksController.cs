@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using UnchainedBackend.Models;
 using UnchainedBackend.Models.PartialModels;
+using UnchainedBackend.Models.ReturnModels;
 using UnchainedBackend.Repos;
 
 namespace UnchainedBackend.Controllers
@@ -32,6 +34,14 @@ namespace UnchainedBackend.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> GetMyCollection([FromBody] SignatureModel model)
+        {
+            var collection = await _tracksRepo.GetMyCollection(model.PublicAddress);
+            if (collection == null) return NoContent();
+            return Ok(collection);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> PostTrack([FromForm] TrackModel model)
         {
             // Check if the request contains file
@@ -47,6 +57,13 @@ namespace UnchainedBackend.Controllers
         public async Task<IActionResult> DeleteTrack([FromBody] int Id)
         {
             var result = await _tracksRepo.DeleteTrack(Id);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetTrackAsSold([FromBody] SetAsSoldModel model)
+        {
+            var result = await _tracksRepo.SetIsSold(model);
             return Ok(result);
         }
     }

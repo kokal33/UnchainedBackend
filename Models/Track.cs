@@ -14,8 +14,6 @@ namespace UnchainedBackend.Models
         public bool IsListed { get; set; } = false;
         public bool IsSold { get; set; } = false;
         public int TokenId { get; set; }
-        public double Price { get; set; }
-        public int TypeOfListing { get; set; }
         public virtual User OwnerOf { get; set; }
         public string OwnerOfPublicAddress { get; set; }
         public virtual Auction Auction { get; set; }

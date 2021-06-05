@@ -31,7 +31,7 @@ namespace UnchainedBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Bid([FromBody] Bid bid)
+        public async Task<IActionResult> Bid([FromBody] BidModel bid)
         {
             var result = await _bidsRepo.PostBid(bid);
             return Ok(result);

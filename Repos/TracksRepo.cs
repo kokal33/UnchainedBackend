@@ -16,19 +16,17 @@ namespace UnchainedBackend.Repos
     public interface ITracksRepo
     {
         Task<IEnumerable<TrackReturn>> GetTracks();
-        Task<Track> GetTrack(int id);
+        Task<TrackDetailReturn> GetTrack(int id);
+        Task<IEnumerable<TrackReturn>> GetMyCollection(string OwnerOfPublicAddress);
         Task<Track> GetTrackForMinting(int id);
         Task<int> PostTrack(TrackModel track);
         Task<bool> DeleteTrack(int id);
         Task<bool> UpdateTrack(int trackId, string title, string description, string isMinted, string isAuctioned, string isListed, string isSold);
         Task<bool> SetIsListed(int trackId, bool isListed);
-        Task<bool> SetIsSold(int trackId, bool isSold);
+        Task<bool> SetIsSold(SetAsSoldModel model);
         Task<bool> SetIsMinted(Track track, bool isMinted);
         Task<bool> SetTokenId(Track track, int tokenId);
         Task<bool> SetIsAuctioned(int trackId, bool isAuctioned);
-
-
-
     }
     public class TracksRepo : ITracksRepo
     {
@@ -43,31 +41,73 @@ namespace UnchainedBackend.Repos
 
         public async Task<IEnumerable<TrackReturn>> GetTracks()
         {
-            return await _context.Tracks.Where(w => w.IsSold == false && w.IsMinted==true).Include(t => t.Auction).Include(t=>t.OwnerOf)
+            return await _context.Tracks.Where(w => w.IsSold == false && w.IsMinted==true).Include(t => t.Auction)
+                .Include(t=>t.OwnerOf)
+                .Include(t=>t.Listing)
                 .Select(x => new TrackReturn
             {
-                AuctionEnding = x.Auction != null ? x.Auction.Ending : null,
-                AuctionId = x.AuctionId,
+                AuctionEnding = x.Auction != null ? (x.Auction.Ending- DateTime.Now).TotalSeconds : null,
                 IsAuctioned = x.IsAuctioned,
                 IsListed = x.IsListed,
                 Id = x.Id,
-                Description = x.Description,
                 FileLocation = x.FileLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1],
                 ImageLocation = x.ImageLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1],
                 OwnerOfProfilePic = x.OwnerOf.ProfilePic,
-                OwnerOfPublicAddress = x.OwnerOfPublicAddress,
+                OwnerOfName = x.OwnerOf.Name,
                 Title = x.Title,
-                TokenId = x.TokenId,
-                Price = x.Auction != null ? x.Auction.Price : null
-            }).ToListAsync();
+                Price = x.Auction != null ? x.Auction.Price : x.Listing.Price,
+                AuctionContractAddress = x.Auction != null ? x.Auction.ContractAddress : null
+                }).ToListAsync();
         }
 
-        public async Task<Track> GetTrack(int id)
+        public async Task<TrackDetailReturn> GetTrack(int id)
         {
-            var track = await _context.Tracks.Include(x => x.OwnerOf).Include(x=>x.Auction).FirstOrDefaultAsync(t => t.Id == id);
-            track.FileLocation = track.FileLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1];
-            track.ImageLocation = track.ImageLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1];
-            return track;
+            var track = await _context.Tracks.Include(x => x.OwnerOf).Include(x=>x.Auction).ThenInclude(a=>a.Bids).Include(x=>x.Listing)
+                .FirstOrDefaultAsync(t => t.Id == id);
+            TrackDetailReturn trackReturn = new()
+            {
+                Auction = track.Auction,
+                AuctionId = track.AuctionId,
+                FileLocation = track.FileLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1],
+                ImageLocation = track.ImageLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1],
+                Title = track.Title,
+                Description = track.Description,
+                Id = track.Id,
+                IsAuctioned = track.IsAuctioned,
+                IsListed = track.IsListed,
+                IsMinted = track.IsMinted,
+                IsSold = track.IsSold,
+                ListingId = track.ListingId,
+                OwnerOf = track.OwnerOf,
+                OwnerOfPublicAddress = track.OwnerOfPublicAddress,
+                Timestamp = track.Timestamp,
+                TokenId = track.TokenId,
+                AuctionEnding = track.Auction != null ? (track.Auction.Ending - DateTime.Now).TotalSeconds : null,
+                Listing = track.Listing
+            };
+            return trackReturn;
+        }
+
+        public async Task<IEnumerable<TrackReturn>> GetMyCollection(string OwnerOfPublicAddress)
+        {
+            return await _context.Tracks.Where(w => w.IsSold == false && w.IsMinted == true && w.OwnerOfPublicAddress == OwnerOfPublicAddress)
+               .Include(t => t.Auction)
+               .Include(t => t.OwnerOf)
+               .Include(t => t.Listing)
+               .Select(x => new TrackReturn
+               {
+                   AuctionEnding = x.Auction != null ? (x.Auction.Ending - DateTime.Now).TotalSeconds : null,
+                   IsAuctioned = x.IsAuctioned,
+                   IsListed = x.IsListed,
+                   Id = x.Id,
+                   FileLocation = x.FileLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1],
+                   ImageLocation = x.ImageLocation.Split(new[] { "wwwroot" }, StringSplitOptions.None)[1],
+                   OwnerOfProfilePic = x.OwnerOf.ProfilePic,
+                   OwnerOfName = x.OwnerOf.Name,
+                   Title = x.Title,
+                   Price = x.Auction != null ? x.Auction.Price : x.Listing.Price,
+                   AuctionContractAddress = x.Auction != null ? x.Auction.ContractAddress : null
+               }).ToListAsync();
         }
         public async Task<Track> GetTrackForMinting(int id)
         {
@@ -169,10 +209,18 @@ namespace UnchainedBackend.Repos
             return true;
         }
 
-        public async Task<bool> SetIsSold(int trackId, bool isSold)
+        public async Task<bool> SetIsSold(SetAsSoldModel model)
         {
-            Track track = new Track { Id = trackId, IsSold = isSold };
+            Track track = new() { Id = model.TrackId, IsSold = true, OwnerOfPublicAddress = model.To };
+                                  //Listing = null, ListingId = null, Auction= null, AuctionId= null};
             _context.Entry(track).Property(x => x.IsSold).IsModified = true;
+            _context.Entry(track).Reference(x => x.OwnerOfPublicAddress).IsModified = true;
+            // TODO: clear listings and auctions tied to the track
+            //_context.Entry(track).Reference(x => x.Listing).IsModified = true;
+            //_context.Entry(track).Reference(x => x.ListingId).IsModified = true;
+            //_context.Entry(track).Reference(x => x.Auction).IsModified = true;
+            //_context.Entry(track).Reference(x => x.AuctionId).IsModified = true;
+
             await _context.SaveChangesAsync();
             return true;
         }

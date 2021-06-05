@@ -91,6 +91,11 @@ namespace UnchainedBackend.Controllers
                 return BadRequest(ex);
             }
         }
-
+        [HttpPost]
+        public async Task<IActionResult> UnchainUser([FromBody] SignatureModel model)
+        {
+            var result = await _usersRepo.UnchainUser(model.PublicAddress);
+            return Ok(result);
+        }
     }
 }

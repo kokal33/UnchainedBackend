@@ -31,7 +31,8 @@ namespace UnchainedBackend.Controllers
                 IsEnded = false,
                 Started = model.Started,
                 TrackId = model.TrackId,
-                Price = model.Price
+                Price = model.Price,
+                ContractAddress = model.ContractAddress
             };
             var posted = await _auctionRepo.SetAuction(auction);
             return Ok(posted);

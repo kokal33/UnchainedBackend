@@ -66,8 +66,6 @@ namespace UnchainedBackend.Migrations
                     IsListed = table.Column<bool>(type: "boolean", nullable: false),
                     IsSold = table.Column<bool>(type: "boolean", nullable: false),
                     TokenId = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false),
-                    TypeOfListing = table.Column<int>(type: "integer", nullable: false),
                     OwnerOfPublicAddress = table.Column<string>(type: "text", nullable: true),
                     AuctionId = table.Column<string>(type: "text", nullable: true),
                     ListingId = table.Column<string>(type: "text", nullable: true),
@@ -94,7 +92,8 @@ namespace UnchainedBackend.Migrations
                     Ending = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IsEnded = table.Column<bool>(type: "boolean", nullable: false),
                     TrackId = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false)
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    ContractAddress = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -132,9 +131,10 @@ namespace UnchainedBackend.Migrations
                 name: "Bids",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OwnerOfPublicAddress = table.Column<string>(type: "text", nullable: true),
-                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    Amount = table.Column<double>(type: "double precision", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     AuctionId = table.Column<int>(type: "integer", nullable: true)
                 },

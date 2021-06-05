@@ -29,8 +29,13 @@ namespace UnchainedBackend.Repos
 
         public async Task<bool> SetAuction(Auction auction) 
         {
-            await _context.Auctions.AddAsync(auction);
-            await _context.SaveChangesAsync();
+            var track = await _context.Tracks.Include(x => x.Auction).FirstOrDefaultAsync(x => x.Id == auction.TrackId);
+            track.Auction = auction;
+            track.IsAuctioned = true;
+            _context.Entry(track).Property(x => x.IsAuctioned).IsModified = true;
+            _context.Entry(auction).State = EntityState.Added;
+            _context.Tracks.Update(track);
+            _context.SaveChanges();
             return true;
         }
     }

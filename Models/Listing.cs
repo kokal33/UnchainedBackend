@@ -11,6 +11,5 @@ namespace UnchainedBackend.Models
         public virtual Track Track { get; set; }
         public virtual int TrackId { get; set; }
         public DateTime Created { get; set; }
-
     }
 }

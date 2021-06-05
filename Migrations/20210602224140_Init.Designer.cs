@@ -10,7 +10,7 @@ using UnchainedBackend.Data;
 namespace UnchainedBackend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210601222612_Init")]
+    [Migration("20210602224140_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,9 @@ namespace UnchainedBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ContractAddress")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("Ending")
                         .HasColumnType("timestamp without time zone");
@@ -53,11 +56,13 @@ namespace UnchainedBackend.Migrations
 
             modelBuilder.Entity("UnchainedBackend.Models.Bid", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
+                    b.Property<double>("Amount")
+                        .HasColumnType("double precision");
 
                     b.Property<int?>("AuctionId")
                         .HasColumnType("integer");
@@ -155,9 +160,6 @@ namespace UnchainedBackend.Migrations
                     b.Property<string>("OwnerOfPublicAddress")
                         .HasColumnType("text");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
-
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp without time zone");
 
@@ -165,9 +167,6 @@ namespace UnchainedBackend.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("TokenId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TypeOfListing")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

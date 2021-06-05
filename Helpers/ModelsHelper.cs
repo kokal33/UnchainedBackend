@@ -11,9 +11,8 @@ namespace UnchainedBackend.Helpers
             {
                 Description = model.Description,
                 OwnerOfPublicAddress = model.OwnerOfPublicAddress,
-                Title = model.Title,
-                Price = model.Price
-            };
+                Title = model.Title
+           };
         }
     }
 }

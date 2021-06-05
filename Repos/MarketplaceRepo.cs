@@ -25,8 +25,12 @@ namespace UnchainedBackend.Repos
         public async Task PostListing(Listing listing)
         {
             var track = await _context.Tracks.Include(x=>x.Listing).FirstOrDefaultAsync(x=>x.Id == listing.TrackId);
+            listing.Created = DateTime.Now;
             track.Listing = listing;
-            _context.Entry(track).State = EntityState.Modified;
+            track.IsListed = true;
+            _context.Entry(track).Property(x => x.IsListed).IsModified = true;
+            _context.Entry(listing).State = EntityState.Added;
+            _context.Tracks.Update(track);
             _context.SaveChanges();
         }
     }

@@ -10,6 +10,5 @@ namespace UnchainedBackend.Models.PartialModels
         public IFormFile File { get; set; }
         public IFormFile CoverImage { get; set; }
         public string OwnerOfPublicAddress { get; set; }
-        public int Price { get; set; }
     }
 }

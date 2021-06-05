@@ -8,5 +8,6 @@ namespace UnchainedBackend.Models.PartialModels
         public DateTime Ending { get; set; }
         public int TrackId { get; set; }
         public double Price { get; set; }
+        public string ContractAddress { get; set; }
     }
 }

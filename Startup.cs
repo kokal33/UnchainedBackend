@@ -50,6 +50,8 @@ namespace UnchainedBackend
             services.AddScoped<ITracksRepo, TracksRepo>();
             services.AddScoped<IBidsRepo, BidsRepo>();
             services.AddScoped<IAuctionRepo, AuctionRepo>();
+            services.AddScoped<IMarketplaceRepo, MarketplaceRepo>();
+
             services.AddControllersWithViews()
                      .AddNewtonsoftJson(options =>
                      options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
