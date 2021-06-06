@@ -214,7 +214,7 @@ namespace UnchainedBackend.Repos
             Track track = new() { Id = model.TrackId, IsSold = true, OwnerOfPublicAddress = model.To };
                                   //Listing = null, ListingId = null, Auction= null, AuctionId= null};
             _context.Entry(track).Property(x => x.IsSold).IsModified = true;
-            _context.Entry(track).Reference(x => x.OwnerOfPublicAddress).IsModified = true;
+            _context.Entry(track).Property(x => x.OwnerOfPublicAddress).IsModified = true;
             // TODO: clear listings and auctions tied to the track
             //_context.Entry(track).Reference(x => x.Listing).IsModified = true;
             //_context.Entry(track).Reference(x => x.ListingId).IsModified = true;
