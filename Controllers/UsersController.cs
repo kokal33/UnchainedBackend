@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MailChimp.Net.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnchainedBackend.Helpers;
 using UnchainedBackend.Models;
@@ -12,11 +14,12 @@ namespace UnchainedBackend.Controllers
     {
         private readonly IUsersRepo _usersRepo;
         private readonly IEthHelper _ethHelper;
+        private readonly IMailChimpRepo _mailChimpRepo;
 
-
-        public UsersController(IUsersRepo usersRepo, IEthHelper ethHelper) {
+        public UsersController(IUsersRepo usersRepo, IEthHelper ethHelper, IMailChimpRepo mailChimpRepo) {
             _usersRepo = usersRepo;
             _ethHelper = ethHelper;
+            _mailChimpRepo = mailChimpRepo;
         }
 
         [HttpGet]
@@ -62,6 +65,13 @@ namespace UnchainedBackend.Controllers
         public async Task<IActionResult> UpdateUser([FromBody] User user)
         {
             var result = await _usersRepo.UpdateUser(user);
+            MailChimpModel mailModel = new()
+            {
+                Email = user.Email,
+                FirstName = user.Name,
+                Tags = new List<MemberTag>() { new MemberTag() { Id = 1, Name = "Artist" } }
+            };
+            var mailChimpResult = await _mailChimpRepo.AddUserToList(mailModel);
             return Ok(result);
         }
 

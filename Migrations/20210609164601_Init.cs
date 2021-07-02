@@ -14,6 +14,7 @@ namespace UnchainedBackend.Migrations
                 {
                     PublicAddress = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
                     Signature = table.Column<string>(type: "text", nullable: true),
                     Bio = table.Column<string>(type: "text", nullable: true),
                     ProfilePic = table.Column<string>(type: "text", nullable: true),

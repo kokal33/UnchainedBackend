@@ -89,8 +89,11 @@ namespace UnchainedBackend.Controllers
             // Set track as minted in DB
             await _tracksRepo.SetIsMinted(track, true);
             // Get total token supply and precalculate tokenId
-            var totalSupply = await _ethRepo.GetContractSupply();
+            // If token supply is 0 tokenId is 0
+            var totalSupply = await _ethRepo.GetContractSupply();                
             var tokenId = totalSupply - 1;
+            if (tokenId == -1)
+                tokenId = 0;
             await _tracksRepo.SetTokenId(track, tokenId);
 
             MintReturn result = new()

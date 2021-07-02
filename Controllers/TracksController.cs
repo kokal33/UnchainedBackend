@@ -42,6 +42,14 @@ namespace UnchainedBackend.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> GetMyCreated([FromBody] SignatureModel model)
+        {
+            var collection = await _tracksRepo.GetMyCreated(model.PublicAddress);
+            if (collection == null) return NoContent();
+            return Ok(collection);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> PostTrack([FromForm] TrackModel model)
         {
             // Check if the request contains file
@@ -64,6 +72,13 @@ namespace UnchainedBackend.Controllers
         public async Task<IActionResult> SetTrackAsSold([FromBody] SetAsSoldModel model)
         {
             var result = await _tracksRepo.SetIsSold(model);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetNoBidsFinishedAuction([FromBody] IdModel model)
+        {
+            var result = await _tracksRepo.SetNoBidsFinishedAuction(model.Id);
             return Ok(result);
         }
     }

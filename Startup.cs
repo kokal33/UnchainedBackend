@@ -1,3 +1,5 @@
+using MailChimp.Net;
+using MailChimp.Net.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +24,7 @@ namespace UnchainedBackend
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment Environment { get; }
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
+       
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -42,6 +44,7 @@ namespace UnchainedBackend
             services.AddSignalR();
             services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(Configuration["Data:DbContext:ConnectionString"]));
 
+
             services.AddControllersWithViews();
             services.AddScoped<IEthRepo, EthRepo>();
             services.AddScoped<IEthHelper, EthHelper>();
@@ -51,6 +54,7 @@ namespace UnchainedBackend
             services.AddScoped<IBidsRepo, BidsRepo>();
             services.AddScoped<IAuctionRepo, AuctionRepo>();
             services.AddScoped<IMarketplaceRepo, MarketplaceRepo>();
+            services.AddScoped<IMailChimpRepo, MailChimpRepo>();
 
             services.AddControllersWithViews()
                      .AddNewtonsoftJson(options =>

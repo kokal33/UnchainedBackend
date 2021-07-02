@@ -189,6 +189,9 @@ namespace UnchainedBackend.Migrations
                     b.Property<string>("Bio")
                         .HasColumnType("text");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
                     b.Property<string>("Facebook")
                         .HasColumnType("text");
 

@@ -16,5 +16,6 @@ namespace UnchainedBackend.Models.ReturnModels
         public double? AuctionEnding { get; set; }
         public double? Price { get; set; }
         public string AuctionContractAddress { get; set; }
+        public bool IsSold { get; set; }
     }
 }

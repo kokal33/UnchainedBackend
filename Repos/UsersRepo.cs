@@ -21,7 +21,6 @@ namespace UnchainedBackend.Repos
     public class UsersRepo : IUsersRepo
     {
         private readonly ApplicationContext _context;
-
         public UsersRepo(ApplicationContext context)
         {
             _context = context;
@@ -68,12 +67,13 @@ namespace UnchainedBackend.Repos
 
             _context.Entry(existingUser).CurrentValues.SetValues(user);
             await _context.SaveChangesAsync();
+
             return true;
         }
 
         public async Task<IEnumerable<ArtistsReturn>> GetArtists()
         {
-            return await _context.Users.Where(x => x.IsArtist).Select(a => new ArtistsReturn()
+            return await _context.Users.Where(x => x.IsArtist && x.Verified).Select(a => new ArtistsReturn()
             {
                 Name = a.Name,
                 ProfilePic = a.ProfilePic,
